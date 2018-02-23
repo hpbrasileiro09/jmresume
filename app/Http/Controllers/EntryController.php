@@ -210,6 +210,8 @@ class EntryController extends Controller
 
         $published = \Helpers::getPublished();
 
+        $register->dt_entry = Carbon::now()->format('d-m-Y');
+
         $register->status = 1;
         $register->published = 1;
 
