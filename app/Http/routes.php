@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth','admin']], function() {
 	Route::resource('/time', 'TimeController',['except' => ['create','destroy']]);
 	Route::resource('/person', 'PersonController',['except' => ['index','create','store','destroy']]);
 	Route::get('/reports/detalhe', ['as' => 'reports.detalhe', 'uses' => 'ReportController@detalhe']);
+	Route::get('/entry/json/{id}', 'EntryController@entryjson');
+	Route::post('/entry/save', 'EntryController@entrysave');
 });
 
 Route::group(['middleware' => 'cors'], function() {

@@ -626,4 +626,20 @@ class Helpers {
         return $html;
     }
     
+    public function MontaSimNaoRB($label, $simnao, $slabel='')
+    {
+      $_checked = '';
+      if ($simnao == 1) $_checked = 'checked="checked"'; 
+      $html = "";
+      $html .= '<div class="checkbox">';
+      //$html .= '<div class="togglebutton">';
+      $html .= '<label>';
+      $html .= '<input type="checkbox" '.$_checked.' name="'.$label.'"  id="'.$label.'" value="'.$simnao.'">';
+      $html .= '&nbsp;'.$slabel;
+      $html .= '</label>';
+      $html .= '</div>';
+
+      return $html;
+    }
+
 }
