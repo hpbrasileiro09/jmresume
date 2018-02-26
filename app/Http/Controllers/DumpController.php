@@ -54,8 +54,9 @@ class DumpController extends Controller
 
     public function backup()
     {
-        $exec = env('DB_DUMP', 'mysqldump');
         $ds = DIRECTORY_SEPARATOR;
+        $exec = env('DB_DUMP', 'mysqldump');
+        $host = env('DB_HOST', 'mysql.hpbtec.com.br'); 
         $username = env('DB_USERNAME', 'hpbtec_user'); 
         $schema = env('DB_DATABASE', 'hpbdev1_db');
         $password = env('DB_PASSWORD', 'g?CVsN-vVsN-v');
@@ -63,11 +64,11 @@ class DumpController extends Controller
         $file = date("Ymd_His_").'Jmresume.sql';
 
         if ($password) {
-            $command = sprintf('$s --add-drop-table %s -u %s --password=%s > %s', 
-                $exec, $schema, $username, $password, $path . $file);
+            $command = sprintf('%s --add-drop-table %s -u %s --password=%s -h %s > %s', 
+                $exec, $schema, $username, $password, $host, $path . $file);
         } else {
-            $command = sprintf('%s --add-drop-table %s -u %s > %s', 
-                $exec, $schema, $username, $path . $file);
+            $command = sprintf('%s --add-drop-table %s -u %s -h %s > %s', 
+                $exec, $schema, $username, $host, $path . $file);
         }
 
         if (!is_dir($path)) {
