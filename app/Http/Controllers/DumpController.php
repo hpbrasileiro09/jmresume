@@ -54,7 +54,7 @@ class DumpController extends Controller
 
     public function backup()
     {
-        $exec = "/Applications/XAMPP/bin/mysqldump";
+        $exec = env('DB_DUMP', 'mysqldump');
         $ds = DIRECTORY_SEPARATOR;
         $username = env('DB_USERNAME', 'hpbtec_user'); 
         $schema = env('DB_DATABASE', 'hpbdev1_db');
