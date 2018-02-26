@@ -28,6 +28,8 @@ Route::group(['middleware' => ['auth','admin']], function() {
 	Route::resource('/category', 'CategoryController');
 	Route::resource('/param', 'ParamController');
 	Route::resource('/time', 'TimeController',['except' => ['create','destroy']]);
+	Route::get('/dump/backup', ['as' => 'dump.backup', 'uses' => 'DumpController@backup']);
+	Route::resource('/dump', 'DumpController',['except' => ['create','destroy']]);
 	Route::resource('/person', 'PersonController',['except' => ['index','create','store','destroy']]);
 	Route::get('/reports/detalhe', ['as' => 'reports.detalhe', 'uses' => 'ReportController@detalhe']);
 	Route::get('/entry/json/{id}', 'EntryController@entryjson');

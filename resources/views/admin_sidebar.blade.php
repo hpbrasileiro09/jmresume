@@ -46,6 +46,7 @@
             <li class="header">CONFIGURATIONS</li>
             <li><a href="{{ route('param.show', 1) }}"><span>Params</span></a></li>
             <li><a href="{{ route('users.index') }}"><span>Users</span></a></li>
+            <li><a href="{{ route('dump.index', 1) }}"><span>Backups</span></a></li>
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->
