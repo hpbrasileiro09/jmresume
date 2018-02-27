@@ -24,6 +24,8 @@ Route::group(['middleware' => ['auth','admin']], function() {
 	Route::get('/', 'AdminController@index')->name('dashboard');
 	Route::get('/admin', 'AdminController@index');
 	Route::resource('/users', 'UsersController');
+	Route::get('/entry/support', ['as' => 'entry.support', 'uses' => 'EntryController@support']);
+	Route::post('/entry/supportsave', ['as' => 'entry.supportsave', 'uses' => 'EntryController@supportsave']);
 	Route::resource('/entry', 'EntryController');
 	Route::resource('/category', 'CategoryController');
 	Route::resource('/param', 'ParamController');

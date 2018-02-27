@@ -26,10 +26,42 @@
 	</div>
 	</form>
 
-</div>
+  <form id="lastdscategory" name="lastdscategory" action="#" method="post">
+    <input type="hidden" name="id_category" id="id_category" value="0" />
+  </form> 
 
 </div>
 
 </div>
+
+</div>
+
+<script>
+  $(function () {
+    $('.id_category').on('change', function() {
+        alert('teste');
+        $('#lastdscategory input:hidden[id=id_category]').val( $(this).val() );
+        lastDsCategory();
+    });
+
+    var lastDsCategory = function( ) {
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/time/' + $('#lastdscategory input:hidden[id=id_category]').val(),
+            data: $("form[id=lastdscategory]").serialize(),
+            success: function(data) {
+                $.each(data, function(key, value){
+                    $('input:text[id=ds_category]').val(value.ds_category);    
+                    $('input:text[id=ds_subcategory]').val(value.ds_subcategory);    
+                });
+            },       
+            error: function(jqXHR, textStatus, errorThrown) {  
+                $("#msg").html('failure! please verify');
+            }              
+        });         
+    };
+  });
+</script>
 
 @endsection

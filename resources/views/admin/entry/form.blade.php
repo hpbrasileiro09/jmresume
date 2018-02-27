@@ -37,7 +37,7 @@
 <div class="form-group">
 	<label for="id_category" class="control-label col-sm-2">Category</label>
 	<div class="col-sm-10">
-		<select id="id_category" name="id_category" class="form-control selectpicker" data-live-search="true">
+		<select id="id_category" name="id_category" class="form-control selectpicker id_category" data-live-search="true">
         @foreach($categories as $item)
 			<option <?php echo ($item->id == $register->id_category ? 'selected="selected"' : ''); ?> value="{{$item->id}}">{{$item->name}}</option>
 		@endforeach

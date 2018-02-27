@@ -518,6 +518,23 @@ class Helpers {
 
     }
 
+    public function MontaCategories($mat, $label, $id_category, $_size=0)
+    {
+      $_width = '';
+      if ($_size != 0) $_width = 'style="width: ' . $_size . 'px;"';
+      $html = "";
+      $html .= '<select ' . $_width . ' class="form-control" name="'.$label.'" id="'.$label.'" >';
+      foreach ($mat as $v) {
+        if ($id_category == $v['id']) {
+          $html .= "<option selected=\"selected\" value=\"" . $v['id'] . "\">" . $v['nome'] . "</option>";
+        } else {
+          $html .= "<option value=\"" . $v['id'] . "\">" . $v['nome'] . "</option>";
+        }
+      }
+      $html .= "</select>";
+      return $html;
+    }
+
     public function MontaIdCategory($mat, $id_category, $_size=0)
     {
       $_width = '';
