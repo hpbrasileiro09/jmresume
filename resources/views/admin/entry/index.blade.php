@@ -103,16 +103,16 @@
               <a href="{{ route('entry.show', $register->id) }}">
                 <span class="glyphicon glyphicon-remove"></span>
               </a>
-              <!--
               &nbsp;&nbsp;&nbsp;
               <a href="{{ route('entry.edit', $register->id) }}">
                 <span class="glyphicon glyphicon-edit"></span>
               </a>
-              -->
+              <!--
               &nbsp;&nbsp;&nbsp;
               <a  href="#" id="w_<?php echo $register->id; ?>" class="itemModal" role="button" data-target="#myModal" data-toggle="modal">
                 <span class="glyphicon glyphicon-edit"></span>
               </a>
+              -->
               <?php } ?>
             </td>
 						<td><?php echo $_icone ?></td>

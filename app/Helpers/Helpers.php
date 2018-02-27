@@ -164,6 +164,15 @@ class Helpers {
         return $resp;
     }
 
+    public function mysqlToDateBr($origem='', $hour=0) {
+        $resp = date('d-m-Y H:i:s');
+        if (strlen($origem) == 19) {
+            $resp = substr($origem, 8, 2) . "/" . substr($origem, 5, 2) . "/" . substr($origem, 0, 4); 
+            if ($hour == 1) $resp .= " " . substr($origem, 11, 8);
+        }
+        return $resp;
+    }
+
     public function getDataAdminLTE() {
 
         $data['messages'] = Array();

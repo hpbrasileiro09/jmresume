@@ -369,7 +369,11 @@ class EntryController extends Controller
     {
         $i = 0;
         $all = $request->all();
+        $action = $request->input("action");
         $mat = $request->input("bag");
+
+        return Array( 'bag' => $mat, 'action' => $action );
+
         $mat0 = explode(",", $mat); 
         foreach($mat0 as $item)
         {
@@ -415,26 +419,33 @@ class EntryController extends Controller
                 'published' => $published,
             );
             $register = Entry::findOrFail($item);
-            $register->id_category = $id_category;
-            $register->dt_entry = $dt_entry;
-            $register->vl_entry = $vl_entry;
-            $register->ds_category = $ds_category;
-            $register->ds_subcategory = $ds_subcategory;
-            $register->status = $status;
-            $register->fixed_costs = $fixed_costs;
-            $register->checked = $checked;
-            $register->published = $published;
-            $register->save();
+            if ($action == "1")
+            {
+                $register->id_category = $id_category;
+                $register->dt_entry = $dt_entry;
+                $register->vl_entry = $vl_entry;
+                $register->ds_category = $ds_category;
+                $register->ds_subcategory = $ds_subcategory;
+                $register->status = $status;
+                $register->fixed_costs = $fixed_costs;
+                $register->checked = $checked;
+                $register->published = $published;
+                $register->save();
+            }
+            if ($action == "2")
+            {
+                //$register->delete();
+            }
             $i++;
         }   
 
         if ($i > 0)
         {
             $kind = 1;
-            $msg = $i . ' register(s) was updated successfully';
+            $msg = $i . " register(s) were " . ($action == "1" ? "updated" : "deleted") . " successfully";
 
             session(['kind' => $kind]);
-            session(['msg' => $msg]);
+            session(['msg' => $msg . "(" . $action . ")"]);
         }
 
         return response()->redirectToRoute($this->path_view . '.support');
@@ -457,7 +468,7 @@ class EntryController extends Controller
 
         $published = \Helpers::getPublished();
 
-        $register->dt_entry = Carbon::now()->format('d-m-Y');
+        $register->dt_entry = Carbon::now()->format('d/m/Y');
 
         $register->status = 1;
         $register->published = 1;
@@ -552,7 +563,7 @@ class EntryController extends Controller
 
         $published = \Helpers::getPublished();
 
-        $register->dt_entry = \Helpers::mysqlToDate($register->dt_entry);
+        $register->dt_entry = \Helpers::mysqlToDateBr($register->dt_entry);
 
         return view('admin.' . $this->path_view . '.edit', 
             compact('register', 'categories', 'published', 'page_header'));        

@@ -16,15 +16,19 @@
               </h3>
               <div class="box-tools">
                 <form action="{{ route('entry.support') }}" method="GET" role="search">
-                  <div class="input-group input-group-sm" style="width: 300px;">
+                  <div class="input-group input-group-sm" style="width: 400px;">
                     <input type="text" name="search" class="form-control pull-right" value="{{$search}}" placeholder="Search">
                     <div class="input-group-btn">
                       <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                       <a href="{{ route('entry.support') }}" class="btn btn-danger btn-xs">
                         <span class="glyphicon glyphicon-refresh"></span>
                       </a>
-                      <a href="#" class="btnSubmit btn btn-info btn-xs">Save</a>
+                      <a href="#" class="btnSubmit btn btn-primary btn-xs">Perform action</a>
                     </div>
+                      <select class="form-control pull-right" name="action_choice" id="action_choice">
+                        <option value="1">Update</option>
+                        <option value="2">Delete</option>
+                      </select>
                   </div>
                 </form>
               </div>
@@ -72,6 +76,7 @@
 				@endforeach
 
         <input type="hidden" id="bag" name="bag" value="">
+        <input type="hidden" id="action" name="action" value="1">
 
 </form>
 
@@ -117,15 +122,17 @@
     $(".btnSubmit").click(function(ev) {            
         ev.preventDefault();
         var i = 0;
-        $('input:checkbox[id=chkbox]').each(function(){
+        $('input:checkbox[id=chkbox]').each(function() {
           if ($(this).is(':checked')) {
             i++;
           }
         });
-        if (i > 0)  
+        if (i > 0) {
+          $("#action").val($("#action_choice").val());
           $("#fsupport").submit();
+        }  
         else
-          alert('Please check at least an entry to save! Thanks!');
+          alert('Please check at least an entry to perform an action! Thanks!');
     });
 
   });

@@ -254,7 +254,7 @@ $(function () {
     });
 
     //Date picker
-    $('#dt_entry').datepicker({
+    $('.dt_entry').datepicker({
         todayHighlight: true,
         format: 'dd/mm/yyyy',            
         autoclose: true,

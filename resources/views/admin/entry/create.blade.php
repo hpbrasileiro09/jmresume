@@ -39,7 +39,6 @@
 <script>
   $(function () {
     $('.id_category').on('change', function() {
-        alert('teste');
         $('#lastdscategory input:hidden[id=id_category]').val( $(this).val() );
         lastDsCategory();
     });

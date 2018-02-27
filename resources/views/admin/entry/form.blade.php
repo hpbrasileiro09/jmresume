@@ -53,7 +53,7 @@
           <div class="input-group-addon">
             <i class="fa fa-calendar"></i>
           </div>
-			<input type="text" name="dt_entry" id="dt_entry" class="form-control pull-right" value="{{ $register->dt_entry or '' }}" placeholder="Date...">
+			<input type="text" name="dt_entry" id="dt_entry" class="dt_entry form-control pull-right" value="{{ $register->dt_entry or '' }}" placeholder="Date...">
         </div>
         <!-- /.input group -->
 
