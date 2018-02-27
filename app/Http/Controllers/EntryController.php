@@ -371,9 +371,6 @@ class EntryController extends Controller
         $all = $request->all();
         $action = $request->input("action");
         $mat = $request->input("bag");
-
-        return Array( 'bag' => $mat, 'action' => $action );
-
         $mat0 = explode(",", $mat); 
         foreach($mat0 as $item)
         {
