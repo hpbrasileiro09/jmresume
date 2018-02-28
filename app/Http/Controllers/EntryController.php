@@ -431,7 +431,7 @@ class EntryController extends Controller
             }
             if ($action == "2")
             {
-                //$register->delete();
+                $register->delete();
             }
             $i++;
         }   
