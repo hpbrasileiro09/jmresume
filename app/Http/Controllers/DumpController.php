@@ -96,4 +96,11 @@ class DumpController extends Controller
         ];        
     }
 
+    public function download($file_name) {
+        $ds = DIRECTORY_SEPARATOR;
+        $path = storage_path() . $ds . 'dumps' . $ds;
+        $file_path = $path . $file_name;
+        return response()->download($file_path);
+    }    
+
 }

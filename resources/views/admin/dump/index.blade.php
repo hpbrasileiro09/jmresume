@@ -27,9 +27,9 @@ foreach($files1 as $k => $v) {
     if (date('Y', $_timestamp) != date('Y')) continue;
     
     if ($pos === false) {
-        echo "<tr><td><small>" . $k . "</small></td><td>" . $v . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+        echo "<tr><td><small>" . $k . "</small></td><td>&nbsp;</td><td>" . $v . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
     } else {
-        echo "<tr><td><small>" . $k . "</small></td><td>" . $v . "</td><td>" . date('d-m-Y H:i:s', $_timestamp) . "</td><td>" . filesize($dumpdir . $v)/1000 . "</td></tr>";
+        echo "<tr><td><small>" . $k . "</small></td><td><a href=\"/download/$v\"><span class=\"glyphicon glyphicon-download-alt\"></span></a></td><td>" . $v . "</td><td>" . date('d-m-Y H:i:s', $_timestamp) . "</td><td>" . filesize($dumpdir . $v)/1000 . "</td></tr>";
     }
     
 }

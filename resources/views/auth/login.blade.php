@@ -21,6 +21,8 @@
   <!-- iCheck -->
   <link rel="stylesheet" href="{{ asset("/bower_components/AdminLTE/plugins/iCheck/square/blue.css")}}">
 
+  <link rel="stylesheet" href="{{ asset("/css/hpbtec.css")}}">
+
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -28,61 +30,63 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <!--a href="{{ url('/') }}"><b>Admin</b>LTE</a-->
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
+<!--body class="hold-transition login-page"-->
+<body class="login-body">
 
-    <p class="login-box-msg"><img src="{{ asset("logo1.png") }}" width="168" height="178" class="img-circle" alt="Hpb Tecnologia"/><br />Logar para iniciar sua sessão</p>
-
-    <form action="{{ url('/login') }}" method="POST">
-      
-      {{ csrf_field() }}
-
-      <div class="form-group has-feedback {{ $errors->has('email') ? ' has-error' : '' }}">
-        <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}">
-        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-        @if ($errors->has('email'))
-            <span class="help-block">
-                <strong>{{ $errors->first('email') }}</strong>
-            </span>
-        @endif
+    <div class="login-box" style="opacity:0.90; filter:alpha(opacity=90);"> 
+      <div class="login-logo">
+        <!--a href="{{ url('/') }}"><b>Admin</b>LTE</a-->
       </div>
-      <div class="form-group has-feedback {{ $errors->has('password') ? ' has-error' : '' }}">
-        <input type="password" id="password" name="password" class="form-control" placeholder="Senha">
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-        @if ($errors->has('password'))
-            <span class="help-block">
-                <strong>{{ $errors->first('password') }}</strong>
-            </span>
-        @endif
-      </div>
-      <div class="row">
-        <div class="col-xs-8">
-          <!--div class="checkbox icheck">
-            <label>
-              <input type="checkbox"> Me manter conectado
-            </label>
-          </div-->
-        </div>
-        <!-- /.col -->
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Logar</button>
-        </div>
-        <!-- /.col -->
-      </div>
-    </form>
+      <!-- /.login-logo -->
+      <div class="login-box-body" style="border-radius: 0px;">
 
-    <a href="{{ url('/password/reset') }}">Esqueci a senha</a><br>
-    <!--a href="{{ url('/register') }}" class="text-center">Registre um novo associado</a-->
+        <p class="login-box-msg"><img src="{{ asset("logo1.png") }}" width="168" height="178" class="img-circle" alt="Hpb Tecnologia"/><br />Logar para iniciar sua sessão</p>
 
-  </div>
-  <!-- /.login-box-body -->
-</div>
-<!-- /.login-box -->
+        <form action="{{ url('/login') }}" method="POST">
+          
+          {{ csrf_field() }}
+
+          <div class="form-group has-feedback {{ $errors->has('email') ? ' has-error' : '' }}">
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            @if ($errors->has('email'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('email') }}</strong>
+                </span>
+            @endif
+          </div>
+          <div class="form-group has-feedback {{ $errors->has('password') ? ' has-error' : '' }}">
+            <input type="password" id="password" name="password" class="form-control" placeholder="Senha">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            @if ($errors->has('password'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('password') }}</strong>
+                </span>
+            @endif
+          </div>
+          <div class="row">
+            <div class="col-xs-8">
+              <!--div class="checkbox icheck">
+                <label>
+                  <input type="checkbox"> Me manter conectado
+                </label>
+              </div-->
+            </div>
+            <!-- /.col -->
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat">Logar</button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+
+        <!--a href="{{ url('/password/reset') }}">Esqueci a senha</a><br-->
+        <!--a href="{{ url('/register') }}" class="text-center">Registre um novo associado</a-->
+
+      </div>
+      <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
 
 <!-- jQuery 2.2.3 -->
 <script src="{{ asset ("/bower_components/AdminLTE/plugins/jQuery/jQuery-2.2.3.min.js") }}"></script>

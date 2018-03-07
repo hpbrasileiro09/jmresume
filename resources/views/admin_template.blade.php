@@ -40,6 +40,8 @@
         <link rel="stylesheet" href="{{ asset("/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.min.css") }}">
         <link rel="stylesheet" href="{{ asset("/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.print.css") }}" media="print">
 
+        <link rel="stylesheet" href="{{ asset ("/css/hpbtec.css") }}">
+
         <link rel="shortcut icon" type="image/ico" href="favicon.ico">
 
         <!-- jQuery 2.1.3 -->
