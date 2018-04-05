@@ -30,8 +30,8 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
-<!--body class="hold-transition login-page"-->
-<body class="login-body">
+<body class="hold-transition login-page">
+<!--body class="login-body"-->
 
     <div class="login-box" style="opacity:0.90; filter:alpha(opacity=90);"> 
       <div class="login-logo">
