@@ -16,6 +16,7 @@
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
 <?php
+$_i = 0;
 echo "<table class=\"table table-striped table-hover \">";
 foreach($files1 as $k => $v) {
     
@@ -23,14 +24,16 @@ foreach($files1 as $k => $v) {
     $_timestamp = strtotime($_data[0]); 
 
     $pos = strpos($v, "Jmresume.sql");
-    
+
     if (date('Y', $_timestamp) != date('Y')) continue;
     
     if ($pos === false) {
         echo "<tr><td><small>" . $k . "</small></td><td>&nbsp;</td><td>" . $v . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
     } else {
         echo "<tr><td><small>" . $k . "</small></td><td><a href=\"/download/$v\"><span class=\"glyphicon glyphicon-download-alt\"></span></a></td><td>" . $v . "</td><td>" . date('d-m-Y H:i:s', $_timestamp) . "</td><td>" . filesize($dumpdir . $v)/1000 . "</td></tr>";
+        if ($_i >= 5) break;
     }
+    $_i++;
     
 }
 echo "</table>";
