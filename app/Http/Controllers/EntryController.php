@@ -40,8 +40,97 @@ class EntryController extends Controller
         $page_header = $this->header_view;
 
         $_param = Param::findOrFail(1);
-
         $agorax = $_param->value;
+
+        $query = $this->montaSql($agorax, $search);
+
+        $registers = DB::select($query);
+
+        $alert = \Helpers::MontaAlert();
+
+        $categories = Array();
+        $_cat = new Category();
+        $_categories = $_cat->select(['categories.*'])->orderBy('name','ASC')->get();
+
+        $i=0;
+        foreach($_categories as $linha)
+        { 
+            $categories[] = Array( 'id' => $linha->id, 'nome' => $linha->name . "&nbsp;(" . $linha->id . ")" );
+            $i++;
+        }
+
+        $categories     = \Helpers::MontaIdCategory($categories, 0, 200);
+        $rb_status      = \Helpers::MontaSimNaoRB("status", "0", "Status");
+        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixo");
+        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Conciliado");
+        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Publicado");
+
+        return view('admin.' . $this->path_view . '.index', 
+            compact(
+                'rb_status',
+                'rb_fixed_costs',
+                'rb_checked',
+                'rb_published',
+                'categories',
+                'query',
+                'registers',
+                'page_header',
+                'search',
+                'alert'
+            ));    
+
+    }
+
+    public function support()
+    {
+        $search = \Request::get('search');
+        $page_header = $this->header_view;
+
+        $_param = Param::findOrFail(1);
+        $agorax = $_param->value;
+
+        $query = $this->montaSql($agorax, $search, false);
+
+        $registers = DB::select($query);
+
+        $alert = \Helpers::MontaAlert();
+
+        $mcategories = Array();
+        $_cat = new Category();
+        $_categories = $_cat->select(['categories.*'])->orderBy('name','ASC')->get();
+
+        $i=0;
+        foreach($_categories as $linha)
+        { 
+            $mcategories[] = Array( 'id' => $linha->id, 'nome' => $linha->name . "&nbsp;(" . $linha->id . ")" );
+            $i++;
+        }
+
+        $categories     = \Helpers::MontaIdCategory($mcategories, 0, 200);
+        $rb_status      = \Helpers::MontaSimNaoRB("status", "0", "Status");
+        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixo");
+        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Conciliado");
+        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Publicado");
+
+        return view('admin.' . $this->path_view . '.support', 
+            compact(
+                'rb_status',
+                'rb_fixed_costs',
+                'rb_checked',
+                'rb_published',
+                'categories',
+                'mcategories',
+                'query',
+                'registers',
+                'page_header',
+                'search',
+                'alert'
+            ));    
+
+    }
+
+    public function montaSql($agorax, $search, $_union = true)
+    {
 
         $d = new \DateTime( $agorax );
         $d->modify( 'first day of +24 month' );
@@ -75,36 +164,41 @@ class EntryController extends Controller
         $query .= "FROM ";
         $query .= "   ( ";
 
-        $query .= "SELECT ";
-        $query .= "   0 AS id, ";
-        $query .= "   0 AS id_category, ";
-        $query .= "   'ENTRADA MONEY' AS nm_category, ";
-        $query .= "   '' AS dt_entry, ";
-        $query .= "   '" . date("d/m/Y",strtotime($agorax)) . "' AS dt_entry_br, "; 
-        $query .= "    0 AS ano, ";
-        $query .= "    0 AS mes, ";
-        $query .= "    0 AS dia, ";
-        $query .= "    '' AS dia_da_semana, ";
-        $query .= "   SUM(j.vl_entry) AS vl_entry, ";
-        $query .= "   '' AS ds_category, ";
-        $query .= "   '' AS ds_subcategory, ";
-        $query .= "   '' AS ds_detail, ";
-        $query .= "   1 AS status, ";
-        $query .= "   0 AS fixed_costs, ";
-        $query .= "   1 AS checked, ";
-        $query .= "   1 AS published, ";
-        $query .= "   '' AS icone, ";
-        $query .= "   '' AS cartao ";
-        $query .= "FROM ";
-        $query .= "   entries j ";
-        $query .= "WHERE ";
-        $query .= "  j.status = 1 AND ";
-        $query .= "  j.dt_entry >= '2009-12-20 00:00:00' AND ";
-        $query .= "  j.dt_entry <= Str_to_date(Date_format(";
-        $query .= "  ADDDATE('" . $agorax . "',+" . $faixaax . "),'%Y-%m-%d 23:59:59'),";
-        $query .= "  Get_format(DATETIME,'iso')) ";
+        if ($_union == true)
+        {
 
-        $query .= "UNION ";
+            $query .= "SELECT ";
+            $query .= "   0 AS id, ";
+            $query .= "   0 AS id_category, ";
+            $query .= "   'ENTRADA MONEY' AS nm_category, ";
+            $query .= "   '' AS dt_entry, ";
+            $query .= "   '" . date("d/m/Y",strtotime($agorax)) . "' AS dt_entry_br, "; 
+            $query .= "    0 AS ano, ";
+            $query .= "    0 AS mes, ";
+            $query .= "    0 AS dia, ";
+            $query .= "    '' AS dia_da_semana, ";
+            $query .= "   SUM(j.vl_entry) AS vl_entry, ";
+            $query .= "   '' AS ds_category, ";
+            $query .= "   '' AS ds_subcategory, ";
+            $query .= "   '' AS ds_detail, ";
+            $query .= "   1 AS status, ";
+            $query .= "   0 AS fixed_costs, ";
+            $query .= "   1 AS checked, ";
+            $query .= "   1 AS published, ";
+            $query .= "   '' AS icone, ";
+            $query .= "   '' AS cartao ";
+            $query .= "FROM ";
+            $query .= "   entries j ";
+            $query .= "WHERE ";
+            $query .= "  j.status = 1 AND ";
+            $query .= "  j.dt_entry >= '2009-12-20 00:00:00' AND ";
+            $query .= "  j.dt_entry <= Str_to_date(Date_format(";
+            $query .= "  ADDDATE('" . $agorax . "',+" . $faixaax . "),'%Y-%m-%d 23:59:59'),";
+            $query .= "  Get_format(DATETIME,'iso')) ";
+
+            $query .= "UNION ";
+
+        }
 
         $_images[] = Array( 'id' =>  '89', 'src' => asset('icones/globo.png'),     'alt' => 'globo' );
         $_images[] = Array( 'id' =>  '91', 'src' => asset('icones/telefone.png'),  'alt' => 'telefone' );
@@ -177,191 +271,16 @@ class EntryController extends Controller
         }
 
         $query .= ") AS entries ";
-        $query.="ORDER BY dt_entry, ds_subcategory";
 
-        $registers = DB::select($query);
-
-        $alert = \Helpers::MontaAlert();
-
-        $categories = Array();
-        $_cat = new Category();
-        $_categories = $_cat->select(['categories.*'])->orderBy('name','ASC')->get();
-
-        $i=0;
-        foreach($_categories as $linha)
-        { 
-            $categories[] = Array( 'id' => $linha->id, 'nome' => $linha->name . "&nbsp;(" . $linha->id . ")" );
-            $i++;
-        }
-
-        $categories     = \Helpers::MontaIdCategory($categories, 0, 200);
-        $rb_status      = \Helpers::MontaSimNaoRB("status", "0", "Status");
-        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixo");
-        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Conciliado");
-        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Publicado");
-
-        return view('admin.' . $this->path_view . '.index', 
-            compact(
-                'rb_status',
-                'rb_fixed_costs',
-                'rb_checked',
-                'rb_published',
-                'categories',
-                'query',
-                'registers',
-                'page_header',
-                'search',
-                'alert'
-            ));    
-
-    }
-
-    public function support()
-    {
-        $search = \Request::get('search');
-        $page_header = $this->header_view;
-
-        $_param = Param::findOrFail(1);
-
-        $agorax = $_param->value;
-
-        $d = new \DateTime( $agorax );
-        $d->modify( 'first day of +24 month' );
-        $futuro = $d->format( 'Y-m-d' ) . ' 00:00:00';
-
-        $faixaax='0';
-        $faixabx='1';
-
-        $query = "";
-
-        $query .= "SELECT ";
-        $query .= "   id, ";
-        $query .= "   id_category, ";
-        $query .= "   nm_category, ";
-        $query .= "   dt_entry, ";
-        $query .= "   dt_entry_br, "; 
-        $query .= "   ano, ";
-        $query .= "   mes, ";
-        $query .= "   dia, ";
-        $query .= "   dia_da_semana, ";
-        $query .= "   vl_entry, ";
-        $query .= "   ds_category, ";
-        $query .= "   ds_subcategory, ";
-        $query .= "   ds_detail, ";
-        $query .= "   status, ";
-        $query .= "   fixed_costs, ";
-        $query .= "   checked, ";
-        $query .= "   published, ";
-        $query .= "   icone, ";
-        $query .= "   cartao ";
-        $query .= "FROM ";
-        $query .= "   ( ";
-
-        $_images[] = Array( 'id' =>  '89', 'src' => asset('icones/globo.png'),     'alt' => 'globo' );
-        $_images[] = Array( 'id' =>  '91', 'src' => asset('icones/telefone.png'),  'alt' => 'telefone' );
-        $_images[] = Array( 'id' =>  '90', 'src' => asset('icones/internet.png'),  'alt' => 'internet' );
-        $_images[] = Array( 'id' =>  '99', 'src' => asset('icones/luz.gif'),       'alt' => 'luz' );
-        $_images[] = Array( 'id' => '100', 'src' => asset('icones/house.png'),     'alt' => 'condominio' );
-        $_images[] = Array( 'id' => '102', 'src' => asset('icones/hospital.png'),  'alt' => 'unimed' );
-        $_images[] = Array( 'id' => '132', 'src' => asset('icones/sercomtel.png'), 'alt' => 'sercomtel' );
-        $_images[] = Array( 'id' => '133', 'src' => asset('icones/internet.png'),  'alt' => 'internet' );
-
-        $query .= "SELECT ";
-        $query .= "   j.id, ";
-        $query .= "   j.id_category, ";
-        $query .= "   c.name as nm_category, ";
-        $query .= "   j.dt_entry, ";
-        $query .= "   COALESCE(DATE_FORMAT(j.dt_entry, '%d/%m/%Y'),'') AS dt_entry_br, "; 
-        $query .= "   year(j.dt_entry) as ano, ";
-        $query .= "   month(j.dt_entry) as mes, ";
-        $query .= "   day(j.dt_entry) as dia, ";
-        $query .= "   CASE DATE_FORMAT(j.dt_entry,'%w') ";
-        $query .= "     WHEN  1 THEN 'Segunda' ";
-        $query .= "     WHEN  2 THEN 'Terça' ";
-        $query .= "     WHEN  3 THEN 'Quarta' ";
-        $query .= "     WHEN  4 THEN 'Quinta' ";
-        $query .= "     WHEN  5 THEN 'Sexta' ";
-        $query .= "     WHEN  6 THEN 'Sábado' ";
-        $query .= "     ELSE 'Domingo' ";
-        $query .= "   END AS dia_da_semana, ";
-        $query .= "   j.vl_entry, ";
-        $query .= "   j.ds_category, ";
-        $query .= "   j.ds_subcategory, ";
-        $query .= "   j.ds_detail, ";
-        $query .= "   j.status, ";
-        $query .= "   j.fixed_costs, ";
-        $query .= "   j.checked, ";
-        $query .= "   j.published, ";
-        $query .= "  CASE j.id_category ";
-
-        foreach($_images as $item)
+        if ($_union == true)
         {
-            $query .= "     WHEN  ".$item['id']." THEN '<img ";
-            $query .= "  src=\"".$item['src']."\" width=\"16\" height=\"16\" border=\"0\" alt=\"".$item['alt']."\" />' ";
+            $query.="ORDER BY dt_entry, ds_subcategory ";
+        } else {
+            $query.="ORDER BY id DESC ";
+            $query.="LIMIT 100";
         }
 
-        $query .= "     ELSE '' ";
-        $query .= "  END AS icone, ";
-        $query .= "  CASE j.ds_subcategory ";
-        $query .= "     WHEN  'Mastercard' THEN '<img ";
-        $query .= "  src=\"".asset("icones/master.gif")."\" width=\"16\" height=\"16\" border=\"0\" alt=\"master\" />' ";
-        $query .= "     WHEN  'Visa' THEN '<img ";
-        $query .= "  src=\"".asset("icones/visa.gif")."\" width=\"16\" height=\"16\" border=\"0\" alt=\"visa\" />' ";
-        $query .= "     WHEN  'Hering' THEN '<img ";
-        $query .= "  src=\"".asset("icones/hering.jpg")."\" width=\"16\" height=\"16\" border=\"0\" alt=\"hering\" />' ";
-        $query .= "     ELSE '' ";
-        $query .= "  END AS cartao ";
-        $query .= "FROM ";
-        $query .= "   entries j ";
-        $query .= "   INNER JOIN categories c ON c.id = j.id_category ";
-
-        if (strlen($search)) { 
-            $query .= " AND ( ";
-            $query .= " j.ds_category LIKE '%" . $search. "%' OR ";
-            $query .= " j.ds_subcategory LIKE '%" . $search. "%' OR ";
-            $query .= " c.name LIKE '%" . $search. "%' ";
-            $query .= " ) ";
-        }
-
-        $query .= ") AS entries ";
-        $query.="ORDER BY id DESC ";
-        $query.="LIMIT 100";
-
-        $registers = DB::select($query);
-
-        $alert = \Helpers::MontaAlert();
-
-        $mcategories = Array();
-        $_cat = new Category();
-        $_categories = $_cat->select(['categories.*'])->orderBy('name','ASC')->get();
-
-        $i=0;
-        foreach($_categories as $linha)
-        { 
-            $mcategories[] = Array( 'id' => $linha->id, 'nome' => $linha->name . "&nbsp;(" . $linha->id . ")" );
-            $i++;
-        }
-
-        $categories     = \Helpers::MontaIdCategory($mcategories, 0, 200);
-        $rb_status      = \Helpers::MontaSimNaoRB("status", "0", "Status");
-        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixo");
-        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Conciliado");
-        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Publicado");
-
-        return view('admin.' . $this->path_view . '.support', 
-            compact(
-                'rb_status',
-                'rb_fixed_costs',
-                'rb_checked',
-                'rb_published',
-                'categories',
-                'mcategories',
-                'query',
-                'registers',
-                'page_header',
-                'search',
-                'alert'
-            ));    
+        return $query;
 
     }
 

@@ -35,9 +35,7 @@
 						<td>{{ $register->email }}</td>
 						<td>{{ $register->role }}</td>
 						<td class="text-right">
-							<a href="{{ route('users.edit', $register->id) }}" class="btn btn-default btn-xs">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</a>
+							<a href="{{ route('users.edit', $register->id) }}" class="btn btn-default btn-xs">Editar</a>
               <!--
 							<a href="{{ route('users.show', $register->id) }}" class="btn btn-default btn-xs">
 								<span class="glyphicon glyphicon-trash"></span>

@@ -16,80 +16,51 @@ use App\Event;
 
 use App\Associated;
 
+use App\Param;
+
 class AdminController extends Controller
 {
     
     public function index() {
 
-        $notifications = Array();
+        $_credits = $this->_getTotal();
+        $_debts = $this->_getTotal(false);
 
-        $news = Array();
+        $credits = number_format($_credits[0]->total, 2, ',', '.');
+        $debts = number_format($_debts[0]->total, 2, ',', '.');
 
-        $researches = Array();
+        $_param = Param::findOrFail(1);
+        $d = new \DateTime( $_param->value );
+        $params = $d->format( 'd/m/Y' );
 
-        $events = Array();
-
-        $associateds = 0;
-
-        $posts = 0;
-
-        $tasks = Array();
+        $backups = 1;
 
         //return view('admin_template')->with(\Helpers::_getDataAdminLTE());
 
-        return view('welcome',compact('posts','associateds','notifications','news','researches','events','tasks'));
+        return view('welcome',compact('debts', 'credits', 'params', 'backups'));
 
     }
 
-    public function _getResearches() {
+    public function _getTotal($_credit = true) {
 
         $sql = "";
         $sql .= "SELECT ";
-        $sql .= "r.id, ";
-        $sql .= "r.title, ";
-        $sql .= "q.name, ";
-        $sql .= "'danger' as color, ";
-        $sql .= "count(*) as quantity ";
+        $sql .= "SUM(e.vl_entry) AS total ";
         $sql .= "FROM ";
-        $sql .= "research_answers ra ";
-        $sql .= "LEFT JOIN researches r ON ra.research_id = r.id ";
-        $sql .= "LEFT JOIN questions q ON ra.question_id = q.id ";
-        $sql .= "WHERE ";
-        $sql .= "r.published = 1 AND ";
-		$sql .= "DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00') BETWEEN r.research_begin AND r.research_end ";
-        $sql .= "GROUP BY q.name ";
-        $sql .= "ORDER BY r.id DESC ";
-
-        $researches = DB::select($sql);
-
-        return $researches;
-
-    }
-
-    public function _getEvents() {
-
-        $sql = "";
-        $sql .= "SELECT ";
-        $sql .= "p.event_id, ";
-        $sql .= "e.title, ";
-        $sql .= "CASE p.type ";
-        $sql .= "  WHEN  'Yes' THEN 'Sim' ";
-        $sql .= "  WHEN  'No' THEN 'Não' ";
-        $sql .= "  ELSE 'Não' ";
-        $sql .= "END AS label, ";
-        $sql .= "count(*) as quantity ";
-        $sql .= "FROM ";
-        $sql .= "participations p ";
-        $sql .= "LEFT JOIN events e ON p.event_id = e.id ";
+        $sql .= "entries e ";
         $sql .= "WHERE ";
         $sql .= "e.published = 1 AND ";
-		$sql .= "DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00') BETWEEN e.enrollment_begin AND e.enrollment_end ";
-        $sql .= "GROUP BY p.event_id, p.type ";
-        $sql .= "ORDER BY p.event_id DESC ";
+        $sql .= "e.status = 1 AND ";
+        if ($_credit == true) {
+            $sql .= "e.vl_entry >= 0 AND ";
+        } else {
+            $sql .= "e.vl_entry < 0 AND ";
+        }
+		$sql .= "YEAR(e.dt_entry) = YEAR(NOW()) and MONTH(e.dt_entry) = MONTH(NOW()) ";
 
-        $events = DB::select($sql);
+        $regs = DB::select($sql);
 
-        return $events;
+        return $regs;
 
     }
 
