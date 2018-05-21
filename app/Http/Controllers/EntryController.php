@@ -190,12 +190,11 @@ class EntryController extends Controller
             $query .= "FROM ";
             $query .= "   entries j ";
             $query .= "WHERE ";
-            $query .= "  j.status = 1 AND ";
-            $query .= "  j.dt_entry >= '2009-12-20 00:00:00' AND ";
+            $query .= "  j.status = 1 ";
+            $query .= "  AND j.dt_entry >= '2009-12-20 00:00:00' AND ";
             $query .= "  j.dt_entry <= Str_to_date(Date_format(";
             $query .= "  ADDDATE('" . $agorax . "',+" . $faixaax . "),'%Y-%m-%d 23:59:59'),";
             $query .= "  Get_format(DATETIME,'iso')) ";
-
             $query .= "UNION ";
 
         }
@@ -258,16 +257,17 @@ class EntryController extends Controller
         $query .= "   entries j ";
         $query .= "   INNER JOIN categories c ON c.id = j.id_category ";
         $query .= "WHERE ";
-        $query .= "   j.dt_entry BETWEEN ";
-        $query .= "  Str_to_date(Date_format(ADDDATE('" . $agorax . "',+" . $faixabx . "),'%Y-%m-%d 00:00:00'),";
-        $query .= "  Get_format(DATETIME,'iso')) AND '" . $futuro . "' ";
 
         if (strlen($search)) { 
-            $query .= " AND ( ";
+            $query .= " ( ";
             $query .= " j.ds_category LIKE '%" . $search. "%' OR ";
             $query .= " j.ds_subcategory LIKE '%" . $search. "%' OR ";
             $query .= " c.name LIKE '%" . $search. "%' ";
             $query .= " ) ";
+        } else {
+            $query .= "  j.dt_entry BETWEEN ";
+            $query .= "  Str_to_date(Date_format(ADDDATE('" . $agorax . "',+" . $faixabx . "),'%Y-%m-%d 00:00:00'),";
+            $query .= "  Get_format(DATETIME,'iso')) AND '" . $futuro . "' ";
         }
 
         $query .= ") AS entries ";
