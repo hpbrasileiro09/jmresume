@@ -135,9 +135,6 @@
     <!-- iCheck -->
     <script src="{{ asset ("/bower_components/AdminLTE/plugins/iCheck/icheck.min.js") }}" type="text/javascript"></script>
 
-    <!-- Google Maps -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXWHTAcQXgF2FROiqNYqqdkCNNJZE1CxQ&libraries=places" async defer></script>
-
     <!-- Slimscroll -->
     <script src="{{ asset ("/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js") }}"></script>
     <!-- FastClick -->
