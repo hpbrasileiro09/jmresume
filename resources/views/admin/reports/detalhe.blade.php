@@ -76,7 +76,7 @@
 
     function trataValorA($pvalor, $ano, $mes, $cat, $deb=0, $vl_prev=0)
     {
-      $path = 'http://'.$_SERVER['HTTP_HOST'].'/jmresumeBmd/public/lupa.php?ano='.$ano.'&mes='.$mes.'&cat='.$cat.'&deb='.$deb;
+      $path = 'http://'.$_SERVER['HTTP_HOST'].'/reports/lupa?ano='.$ano.'&mes='.$mes.'&cat='.$cat.'&deb='.$deb;
       $resp = number_format($pvalor, 2, ',', '.');
       $cor = "green";
       if ($pvalor < 0) $cor = "red";
@@ -401,10 +401,46 @@
                 </tbody>
               </table>
 
+                <!-- Modal -->
+                <div id="myModalX" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="max-width: 100%; max-height: 100%; height: auto; display: table;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <iframe width="100%" height="100%" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" id="ifrm" src="#"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+
             </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
         </div>
       </div>
+
+<script>
+  $(function () {
+
+    $("a[href=\\#myModalX]").click(function(ev) {
+
+        ev.preventDefault();
+
+        var path = $(this).attr("path");
+
+        $('#ifrm').attr('src', path);
+
+        $('#ifrm').css('height',$(window).height()*0.6);
+
+        //$('.modal-content').css('height',$( window ).height()*0.4);
+
+    });
+
+  });
+</script>
+
 @endsection

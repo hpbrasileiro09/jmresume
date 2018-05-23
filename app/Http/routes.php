@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth','admin']], function() {
 	Route::resource('/dump', 'DumpController',['except' => ['create','destroy']]);
 	Route::resource('/person', 'PersonController',['except' => ['index','create','store','destroy']]);
 	Route::get('/reports/detalhe', ['as' => 'reports.detalhe', 'uses' => 'ReportController@detalhe']);
+	Route::get('/reports/lupa', ['as' => 'reports.lupa', 'uses' => 'ReportController@lupa']);
 	Route::get('/entry/json/{id}', 'EntryController@entryjson');
 	Route::post('/entry/save', 'EntryController@entrysave');
 });

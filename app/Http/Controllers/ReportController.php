@@ -211,5 +211,72 @@ class ReportController extends Controller
 
     }
 
+    public function lupa(Request $request)
+    {
+
+        $ano = $request->input('ano', date('Y'));
+        $mes = $request->input('mes', 1);
+        $categoria = $request->input('cat', 0);
+        $debito = $request->input('deb', 0);
+
+        $entries = Array();
+
+        $query = "";
+
+        $query .= "SELECT ";
+        $query .= "   id, ";
+        $query .= "   id_category, ";
+        $query .= "   nm_category, ";
+        $query .= "   dt_entry, ";
+        $query .= "   dt_entry_br, "; 
+        $query .= "   vl_entry, ";
+        $query .= "   ds_category, ";
+        $query .= "   ds_subcategory, ";
+        $query .= "   status, ";
+        $query .= "   fixed_costs, ";
+        $query .= "   checked, ";
+        $query .= "   published ";
+        $query .= "FROM ";
+        $query .= "   ( ";
+
+        $query .= "SELECT ";
+        $query .= "   j.id, ";
+        $query .= "   j.id_category, ";
+        $query .= "   c.name as nm_category, ";
+        $query .= "   j.dt_entry, ";
+        $query .= "   COALESCE(DATE_FORMAT(j.dt_entry, '%d/%m'),'') AS dt_entry_br, "; 
+        $query .= "   j.vl_entry, ";
+        $query .= "   j.ds_category, ";
+        $query .= "   j.ds_subcategory, ";
+        $query .= "   j.status, ";
+        $query .= "   j.fixed_costs, ";
+        $query .= "   j.checked, ";
+        $query .= "   j.published ";
+        $query .= "FROM ";
+        $query .= "   entries j ";
+        $query .= "   INNER JOIN categories c ON c.id = j.id_category ";
+        $query .= "WHERE ";
+        $query .= "   j.status = 1 AND ";
+        $query .= "   j.id_category = ".$categoria." AND ";
+        $query .= "   YEAR(j.dt_entry) = ".$ano." AND ";
+        $query .= "   MONTH(j.dt_entry) = ".$mes." ";
+
+        if ($debito) 
+            $query .= " AND j.vl_entry < 0 ";
+        else
+            $query .= " AND j.vl_entry >= 0 ";
+
+        $query .= ") AS entries ";
+        $query.="ORDER BY dt_entry, ds_subcategory";
+
+        $entries = DB::select($query);
+
+        return view('admin.' . $this->path_view . '.lupa', 
+            compact(
+                'entries'
+            ));    
+
+    }
+
 }
 
