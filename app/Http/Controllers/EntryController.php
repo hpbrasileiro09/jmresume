@@ -527,7 +527,12 @@ class EntryController extends Controller
         session(['kind' => $kind]);
         session(['msg' => $msg]);
 
-        return response()->redirectToRoute($this->path_view . '.show', $id);
+        if (($request->input('confirm') == null ? false : true)) 
+        {
+            return response()->redirectToRoute($this->path_view . '.show', $id);
+        }
+
+        return response()->redirectToRoute($this->path_view . '.index');
     }
 
     /**

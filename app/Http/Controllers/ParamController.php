@@ -120,6 +120,8 @@ class ParamController extends Controller
 
         $register = Param::findOrFail($id);
 
+        $register->value = \Helpers::mysqlToDateBr($register->value);
+
         return view('admin.' . $this->path_view . '.edit', 
             compact('register', 'page_header'));        
     }
@@ -148,7 +150,7 @@ class ParamController extends Controller
         $register = Param::findOrFail($id);
 
         $register->label = $request->input('label');
-        $register->value = $request->input('value');
+        $register->value = \Helpers::inverteData($request->input('value'),0);        
         $register->default = $request->input('default');
 
         $register->save();
@@ -159,7 +161,7 @@ class ParamController extends Controller
         session(['kind' => $kind]);
         session(['msg' => $msg]);
 
-        return response()->redirectToRoute($this->path_view . '.show', $id);
+        return response()->redirectToRoute('entry.index');
     }
 
     /**

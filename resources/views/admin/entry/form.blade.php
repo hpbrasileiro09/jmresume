@@ -111,5 +111,6 @@
 <div class="form-group">
 	<div class="col-sm-10 col-sm-offset-2">
 		<input type="submit" value="Save" class="btn btn-primary" />
+		<div style="float: right;"><b>Confirm create/update?</b>&nbsp;&nbsp;&nbsp;<input type="checkbox" name="confirm" class="form-check-input" value="0">&nbsp;&nbsp;&nbsp;</div>
 	</div>
 </div>

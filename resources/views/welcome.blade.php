@@ -14,7 +14,7 @@
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('entry.index') }}" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -29,7 +29,7 @@
             <div class="icon">
               <i class="ion ion-pie-graph"></i>
             </div>
-            <a href="#" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('entry.index') }}" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -43,7 +43,7 @@
             <div class="icon">
               <i class="ion ion-calendar"></i>
             </div>
-            <a href="#" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('param.edit', 1) }}" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -53,12 +53,12 @@
             <div class="inner">
               <h3><?php echo $backups; ?></h3>
 
-              <p>Backups</p>
+              <p>Backup files</p>
             </div>
             <div class="icon">
               <i class="ion ion-person-add"></i>
             </div>
-            <a href="#" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('dump.index', 1) }}" class="small-box-footer">Mais informações <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->

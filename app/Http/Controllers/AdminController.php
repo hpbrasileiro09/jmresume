@@ -33,7 +33,19 @@ class AdminController extends Controller
         $d = new \DateTime( $_param->value );
         $params = $d->format( 'd/m/Y' );
 
-        $backups = 1;
+        $_i = 0;
+        $ds = DIRECTORY_SEPARATOR;
+        $dumpdir = storage_path() . $ds . 'dumps' . $ds;
+        $dir = $dumpdir;
+        $files1 = scandir($dir);
+        foreach($files1 as $k => $v) {
+            $_data = explode("_", $v);
+            $_timestamp = strtotime($_data[0]); 
+            $pos = strpos($v, "Jmresume.sql");
+            if (date('Y', $_timestamp) != date('Y')) continue;
+            $_i++;
+        }
+        $backups = $_i;
 
         //return view('admin_template')->with(\Helpers::_getDataAdminLTE());
 
