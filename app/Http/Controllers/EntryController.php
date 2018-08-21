@@ -61,9 +61,11 @@ class EntryController extends Controller
 
         $categories     = \Helpers::MontaIdCategory($categories, 0, 200);
         $rb_status      = \Helpers::MontaSimNaoRB("status", "0", "Status");
-        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixo");
-        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Conciliado");
-        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Publicado");
+        $rb_fixed_costs = \Helpers::MontaSimNaoRB("fixed_costs", "0", "Fixed");
+        $rb_checked     = \Helpers::MontaSimNaoRB("checked", "0", "Checked");
+        $rb_published   = \Helpers::MontaSimNaoRB("published", "0", "Published");
+
+        $m_categories = $_categories;
 
         return view('admin.' . $this->path_view . '.index', 
             compact(
@@ -76,7 +78,8 @@ class EntryController extends Controller
                 'registers',
                 'page_header',
                 'search',
-                'alert'
+                'alert',
+                'm_categories'
             ));    
 
     }
@@ -565,7 +568,7 @@ class EntryController extends Controller
     public function entryjson($id)
     {
         $_entry = new Entry();
-        $entries = $_entry->select(['entries.*'])->where('id',$id)->get();
+        $entries = $_entry->select(['entries.*'])->selectRaw("COALESCE(DATE_FORMAT(entries.dt_entry, '%d/%m/%Y'),'') AS dt_entry_br")->where('id',$id)->get();
         return $entries;
     }
 
@@ -579,15 +582,16 @@ class EntryController extends Controller
 
             $register = Entry::create([
                 'id_category' => $request->input('id_category'),
+                'dt_entry' => \Helpers::inverteData($request->input('dt_entry'),0),
                 'dt_entry' => $request->input('dt_entry'),
                 'vl_entry' => $request->input('vl_entry'),
                 'nm_entry' => $request->input('nm_entry'),
                 'ds_category' => $request->input('ds_category'),
                 'ds_subcategory' => $request->input('ds_subcategory'),
-                'status' => ($request->input('status') == null ? '0' : '1'),
-                'fixed_costs' => ($request->input('fixed_costs') == null ? '0' : '1'),
-                'checked' => ($request->input('checked') == null ? '0' : '1'),
-                'published' => ($request->input('published') == null ? '0' : '1'),
+                'status' => ($request->has('status') == true ? '1' : '0'),
+                'fixed_costs' => ($request->has('fixed_costs') == true ? '1' : '0'),
+                'checked' => ($request->has('checked') == true ? '1' : '0'),
+                'published' => ($request->has('published') == true ? '1' : '0'),
                 'ds_detail' => $request->input('ds_detail'),
             ]);
 
@@ -596,15 +600,15 @@ class EntryController extends Controller
             $register = Entry::findOrFail($request->input('id'));
 
             $register->id_category = $request->input('id_category');
-            $register->dt_entry = $request->input('dt_entry');
+            $register->dt_entry = \Helpers::inverteData($request->input('dt_entry'),0);
             $register->vl_entry = $request->input('vl_entry');
             $register->nm_entry = $request->input('nm_entry');
             $register->ds_category = $request->input('ds_category');
             $register->ds_subcategory = $request->input('ds_subcategory');
-            $register->status = ($request->input('status') == null ? '0' : '1');
-            $register->fixed_costs = ($request->input('fixed_costs') == null ? '0' : '1');
-            $register->checked = ($request->input('checked') == null ? '0' : '1');
-            $register->published = ($request->input('published') == null ? '0' : '1');
+            $register->status = ($request->has('status') == true ? '1' : '0');
+            $register->fixed_costs = ($request->has('fixed_costs') == true ? '1' : '0');
+            $register->checked = ($request->has('checked') == true ? '1' : '0');
+            $register->published = ($request->has('published') == true ? '1' : '0');
             $register->ds_detail = $request->input('ds_detail');
 
             $register->save();

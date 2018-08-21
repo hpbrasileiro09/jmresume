@@ -103,16 +103,16 @@
               <a href="{{ route('entry.show', $register->id) }}">
                 <span class="glyphicon glyphicon-remove"></span>
               </a>
+              <!--
               &nbsp;&nbsp;&nbsp;
               <a href="{{ route('entry.edit', $register->id) }}">
                 <span class="glyphicon glyphicon-edit"></span>
               </a>
-              <!--
+              -->
               &nbsp;&nbsp;&nbsp;
               <a  href="#" id="w_<?php echo $register->id; ?>" class="itemModal" role="button" data-target="#myModal" data-toggle="modal">
                 <span class="glyphicon glyphicon-edit"></span>
               </a>
-              -->
               <?php } ?>
             </td>
 						<td><?php echo $_icone ?></td>
@@ -136,67 +136,77 @@
       </div>
 
         <!-- Modal -->
-        <div id="myModal" class="modal">
+        <div id="myModal" class="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">Entry</h4>
+                        <h4 class="modal-title">Update Entry&nbsp;<span id="id_badge" class="badge badge-primary">0</span></h4>
                     </div>
                     <div class="modal-body">
 
                         <form class="form-horizontal" id="translate" name="translate" action="#" method="post">
+                        <input type='hidden' name='id' id='id' value='0' />
                             <fieldset>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <label for="id" class="col-lg-2 control-label">#ID</label>
-                                            <div class="col-lg-10">
-                                                <input type='text' class="form-control" readonly='readonly' name='id' id='id' value='0' placeholder='id' />
-                                            </div>
+                                <div class="form-group">
+                                    <label for="id_category" class="col-lg-2 control-label">Category</label>
+                                    <div class="col-lg-10">
+                                        <select id="id_category" name="id_category" class="form-control selectpicker id_category" data-live-search="true">
+                                            @foreach($m_categories as $item)
+                                          <option value="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ds_category" class="col-lg-2 control-label">Description</label>
+                                    <div class="col-lg-10">
+                                        <input type='text' class="form-control" name='ds_category' id='ds_category' value='' placeholder='Description...' />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ds_subcategory" class="col-lg-2 control-label">Sub Desc.</label>
+                                    <div class="col-lg-10">
+                                        <input type='text' class="form-control" name='ds_subcategory' id='ds_subcategory' value='' placeholder='Sub Desc....' />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vl_entry" class="col-lg-2 control-label">Detail</label>
+                                    <div class="col-lg-10">
+                                        <textarea class="form-control" name='ds_detail' id='ds_detail' placeholder='Detail...'></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dt_entry" class="col-lg-2 control-label">Date</label>
+                                    <div class="col-lg-10">
+                                        <div class="input-group date">
+                                          <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                          </div>
+                                          <input type="text" name="dt_entry" id="dt_entry" class="dt_entry form-control pull-right" value="" placeholder="Dt. Entry...">
+                                        </div>
+                                        <!-- /.input group -->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vl_entry" class="col-lg-2 control-label">Vl. Entry</label>
+                                    <div class="col-lg-10">
+                                        <div class="input-group">
+                                        <span class="input-group-addon">R$</span>
+                                        <input type="text" name="vl_entry" id="vl_entry" class="form-control" value="" placeholder="Vl. Entry...">
+                                        <span class="input-group-addon">.00</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <label for="dt_entry" class="col-lg-2 control-label">Data</label>
-                                            <div class="col-lg-10">
-                                                <input type='text' class="form-control" name='dt_entry' id='dt_entry' value='' placeholder='dt_entry' />
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ds_category" class="col-lg-2 control-label">Descrição</label>
+                                    <label for="status" class="col-lg-2 control-label"></label>
                                     <div class="col-lg-10">
-                                        <input type='text' class="form-control" name='ds_category' id='ds_category' value='' placeholder='ds_category' />
-                                        <input type='text' class="form-control" name='ds_subcategory' id='ds_subcategory' value='' placeholder='ds_subcategory' />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_category" class="col-lg-2 control-label">Categoria</label>
-                                    <div class="col-lg-10">
-                                        <?php echo $categories; ?>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="vl_entry" class="col-lg-2 control-label">Valor</label>
-                                    <div class="col-lg-10">
-                                        <input type='text' class="form-control" name='vl_entry' id='vl_entry' value='' placeholder='vl_entry' />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="vl_entry" class="col-lg-2 control-label">Detalhe</label>
-                                    <div class="col-lg-10">
-                                        <textarea class="form-control" name='ds_detail' id='ds_detail' placeholder=''></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row" style="padding: 20px;">
-                                    <div class="col-md-3"><?php echo $rb_status; ?></div>
-                                    <div class="col-md-3"><?php echo $rb_fixed_costs; ?></div>
-                                    <div class="col-md-3"><?php echo $rb_checked; ?></div>
-                                    <div class="col-md-3"><?php echo $rb_published; ?>
-                                    </div>
+                                      <div class="row" style="padding: 20px;">
+                                        <div class="col-md-3"><?php echo $rb_status; ?></div>
+                                        <div class="col-md-3"><?php echo $rb_fixed_costs; ?></div>
+                                        <div class="col-md-3"><?php echo $rb_checked; ?></div>
+                                        <div class="col-md-3"><?php echo $rb_published; ?></div>
+                                      </div>
                                     </div>
                                 </div>
                             </fieldset>
@@ -251,11 +261,14 @@
             data: $("form[id=translate]").serialize(),
             success: function(data) {
                 $.each(data, function(key, value){
-                    $('#translate input:text[id=dt_entry]').val(value.dt_entry);    
+                    $('#id').val($id);
+                    $('#id_badge').text($id);
+                    $('.dt_entry').datepicker('update', value.dt_entry_br);
                     $('#translate input:text[id=ds_category]').val(value.ds_category);    
                     $('#translate input:text[id=ds_subcategory]').val(value.ds_subcategory);    
                     $('#translate #ds_detail').val(value.ds_detail);    
-                    $("#id_category option[value='" + value.id_category + "']").attr("selected","selected");   
+                    $("#id_category option[value='" + value.id_category + "']").attr("selected","selected");  
+                    $('.selectpicker').selectpicker('refresh');
                     $('#translate input:text[id=vl_entry]').val(value.vl_entry); 
                     if (value.status == 1)
                         $('#translate input:checkbox[id=status]').attr('checked', true); 
