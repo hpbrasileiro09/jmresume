@@ -40,6 +40,8 @@
         <link rel="stylesheet" href="{{ asset("/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.min.css") }}">
         <link rel="stylesheet" href="{{ asset("/bower_components/AdminLTE/plugins/fullcalendar/fullcalendar.print.css") }}" media="print">
 
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
         <link rel="stylesheet" href="{{ asset ("/css/hpbtec.css") }}">
 
         <link rel="shortcut icon" type="image/ico" href="favicon.ico">

@@ -282,8 +282,8 @@
             },       
             error: function(jqXHR, textStatus, errorThrown) {  
                 console.log('_nok_');
-            }              
-        }); 
+            }    
+        });
     };
 
     var translateS = function( ) {
@@ -299,7 +299,9 @@
             error: function(jqXHR, textStatus, errorThrown) {  
                 console.log('_nok_');
             }              
-        });         
+        }).done(function() {
+            swal('Success','Registro salvo com sucesso!.','success');
+        });
     };
 
     $(".itemModal").click(function(ev) {
