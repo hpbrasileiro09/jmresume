@@ -42,6 +42,9 @@ class EntryController extends Controller
         $_param = Param::findOrFail(1);
         $agorax = $_param->value;
 
+        $_param = Param::findOrFail(2);
+        $rb_modal = $_param->value;
+
         $query = $this->montaSql($agorax, $search);
 
         $registers = DB::select($query);
@@ -79,7 +82,8 @@ class EntryController extends Controller
                 'page_header',
                 'search',
                 'alert',
-                'm_categories'
+                'm_categories',
+                'rb_modal'
             ));    
 
     }

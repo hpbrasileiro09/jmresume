@@ -12,6 +12,7 @@ class Param extends Model
 		'value',
 		'default',
 		'dt_params',
+		'type',
     ];
 
 	protected $guarded = ['id'];

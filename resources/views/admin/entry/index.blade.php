@@ -100,19 +100,20 @@
 					<tr <?php echo $_class ?> >
             <td>
               <?php if ($register->id != 0) { ?>
-              <a href="{{ route('entry.show', $register->id) }}">
-                <span class="glyphicon glyphicon-remove"></span>
-              </a>
-              <!--
-              &nbsp;&nbsp;&nbsp;
-              <a href="{{ route('entry.edit', $register->id) }}">
-                <span class="glyphicon glyphicon-edit"></span>
-              </a>
-              -->
-              &nbsp;&nbsp;&nbsp;
-              <a  href="#" id="w_<?php echo $register->id; ?>" class="itemModal" role="button" data-target="#myModal" data-toggle="modal">
-                <span class="glyphicon glyphicon-edit"></span>
-              </a>
+                <a href="{{ route('entry.show', $register->id) }}">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <?php if ($rb_modal == "1") { ?>
+                  &nbsp;&nbsp;&nbsp;
+                  <a  href="#" id="w_<?php echo $register->id; ?>" class="itemModal" role="button" data-target="#myModal" data-toggle="modal">
+                    <span class="glyphicon glyphicon-edit"></span>
+                  </a>
+                <?php } else { ?>
+                  &nbsp;&nbsp;&nbsp;
+                  <a href="{{ route('entry.edit', $register->id) }}">
+                    <span class="glyphicon glyphicon-edit"></span>
+                  </a>
+                <?php } ?>
               <?php } ?>
             </td>
 						<td><?php echo $_icone ?></td>
@@ -298,9 +299,11 @@
             },
             error: function(jqXHR, textStatus, errorThrown) {  
                 console.log('_nok_');
+            },
+            always: function(data) {
+                console.log('_always_');
+                location.reload();
             }              
-        }).done(function() {
-            swal('Success','Registro salvo com sucesso!.','success');
         });
     };
 
@@ -317,6 +320,7 @@
         translateS();  
         ev.preventDefault();
         $('#myModal').modal('hide');
+        console.log('_btnsubmit_');
         location.reload();
     });
 

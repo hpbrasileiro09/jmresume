@@ -13,7 +13,7 @@
       <div class="box-tools">
         <div class="input-group input-group-sm" style="width: 10px;">
           <div class="input-group-btn">
-          <a href="{{ route('param.show', 1) }}" class="btn btn-primary">Voltar</a>
+          <a href="{{ route('param.show', $register->id) }}" class="btn btn-primary">Voltar</a>
           </div>
         </div>
       </div>

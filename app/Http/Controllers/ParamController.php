@@ -32,7 +32,7 @@ class ParamController extends Controller
     {
         $search = \Request::get('search');
         $page_header = $this->header_view;
-        $_regs = new Category();
+        $_regs = new Param();
         $registers = $_regs->where('label','LIKE','%'.$search.'%')
             ->select(['params.*'])
             ->orderBy('label','ASC')
@@ -79,6 +79,7 @@ class ParamController extends Controller
         $_reg = Param::create([
             'label' => $request->input('name'),
             'value' => $request->input('value'),
+            'type' => $request->input('type'),
             'default' => $request->input('default'),
         ]);
 
@@ -100,6 +101,7 @@ class ParamController extends Controller
         $prehtml = "";
         $prehtml .= "#ID: " . $register->id . "<br />";
         $prehtml .= "Label: " . $register->label . "<br />";
+        $prehtml .= "Type: " . $register->type . "<br />";
         $prehtml .= "Value: " . $register->value . "<br />";
         $prehtml .= "Default: " . $register->default . "<br />";
 
@@ -120,7 +122,10 @@ class ParamController extends Controller
 
         $register = Param::findOrFail($id);
 
-        $register->value = \Helpers::mysqlToDateBr($register->value);
+        if ($register->type == "datetime") 
+        {
+            $register->value = \Helpers::mysqlToDateBr($register->value);
+        }
 
         return view('admin.' . $this->path_view . '.edit', 
             compact('register', 'page_header'));        
@@ -150,7 +155,16 @@ class ParamController extends Controller
         $register = Param::findOrFail($id);
 
         $register->label = $request->input('label');
-        $register->value = \Helpers::inverteData($request->input('value'),0);        
+
+        $_route = 'param.index';
+        if ($register->type == "datetime") 
+        {
+            $_route = 'entry.index';
+            $register->value = \Helpers::inverteData($request->input('value'),0);        
+        } else {
+            $register->value = $request->input('value');        
+        }
+
         $register->default = $request->input('default');
 
         $register->save();
@@ -161,7 +175,7 @@ class ParamController extends Controller
         session(['kind' => $kind]);
         session(['msg' => $msg]);
 
-        return response()->redirectToRoute('entry.index');
+        return response()->redirectToRoute($_route);
     }
 
     /**
