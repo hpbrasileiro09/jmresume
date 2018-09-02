@@ -623,4 +623,157 @@ class EntryController extends Controller
 
     }
 
+    public function getEntry($_year, $_month, $_category_id, $_sugerido, $_last_year, $_base_month=8) {
+
+        $entries = Array();
+
+        $query = "SELECT ";
+        $query .= "   j.id, ";
+        $query .= "   j.id_category, ";
+        $query .= "   j.nm_entry, ";
+        $query .= "   c.name as nm_category, ";
+        $query .= "   j.dt_entry, ";
+        $query .= "   year(j.dt_entry) as ano, ";
+        $query .= "   month(j.dt_entry) as mes, ";
+        $query .= "   day(j.dt_entry) as dia, ";
+        $query .= "   j.vl_entry, ";
+        $query .= "   j.ds_category, ";
+        $query .= "   j.ds_subcategory, ";
+        $query .= "   j.status, ";
+        $query .= "   j.fixed_costs, ";
+        $query .= "   j.checked, ";
+        $query .= "   j.published ";
+        $query .= "FROM ";
+        $query .= "   entries j ";
+        $query .= "   INNER JOIN categories c ON c.id = j.id_category ";
+        $query .= "WHERE ";
+        $query .= "   j.id_category = " . $_category_id . " AND ";
+        $query .= "   year(j.dt_entry) = " . $_last_year . " AND";
+        $query .= "   month(j.dt_entry) = " . $_base_month . " ";
+
+        $registers = DB::select($query);
+
+        foreach($registers as $register)
+        {
+            $_vl_entry = $register->vl_entry;
+            if ($_sugerido != 0) $_vl_entry = $_sugerido;
+            $resp = "";
+            $resp .= "( ";
+            $resp .= "" . $register->id_category . ", ";
+            $resp .= "'" . $_year . "-" . str_pad($_month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($register->dia, 2, "0", STR_PAD_LEFT) . "', ";
+            $resp .= "'" . $_vl_entry . "', ";
+            $resp .= "'" . $register->nm_entry . "', ";
+            $resp .= "'" . $register->ds_category . "', ";
+            $resp .= "'" . $register->ds_subcategory . "', ";
+            $resp .= "" . $register->status . ", ";
+            $resp .= "" . $register->fixed_costs . ", ";
+            $resp .= "" . $register->checked . ", ";
+            $resp .= "" . $register->published . " ";
+            $resp .= "), ";
+            echo $resp . "<br />";
+            break;
+        }
+
+    }
+
+    public function getEstatico($_year, $_month, $_day, $_id_category, $_vl_entry, $_ds_category, $_ds_subcategory, $_virgula=',') {
+
+        $resp = "";
+        $resp .= "( ";
+        $resp .= "" . $_id_category . ", ";
+        $resp .= "'" . $_year . "-" . str_pad($_month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($_day, 2, "0", STR_PAD_LEFT) . "', ";
+        $resp .= "'" . $_vl_entry . "', ";
+        $resp .= "'" . "" . "', ";
+        $resp .= "'" . $_ds_category . "', ";
+        $resp .= "'" . $_ds_subcategory . "', ";
+        $resp .= "" . "1" . ", ";
+        $resp .= "" . "0" . ", ";
+        $resp .= "" . "0" . ", ";
+        $resp .= "" . "1" . " ";
+        $resp .= ") " . $_virgula;
+        echo $resp . "<br />";
+
+    }
+
+    public function prepara()
+    {
+
+        $categories = Array();
+
+        $_last_year = 2018;
+
+        $query  = "";
+        $query .= "SELECT ";
+        $query .= "c.id as id, ";
+        $query .= "c.name as nome, ";
+        $query .= "c.published, ";
+        $query .= "c.vl_prev, ";
+        $query .= "c.day_prev, ";
+        $query .= "c.ordem, ";
+        $query .= "c.type, ";
+        $query .= "CASE c.id ";
+        $query .= "   WHEN  83 THEN -100.00 ";  // Padaria
+        $query .= "   WHEN  86 THEN -1100.00 "; // Mercado
+        $query .= "   WHEN  91 THEN -65.90 ";   // Sercomtel Pós (mudar para Pré urgente)
+        $query .= "   WHEN  99 THEN -180.00 ";  // Luz
+        $query .= "   WHEN 100 THEN -550.00 ";  // Golden Place
+        $query .= "   WHEN 119 THEN -30.90 ";   // Netflix
+        $query .= "   WHEN 121 THEN -107.03 ";  // INSS
+        $query .= "   WHEN 124 THEN -310.00 ";  // Conase
+        $query .= "   WHEN 133 THEN -100.00 ";  // Netcombo
+        $query .= "   WHEN 140 THEN -550.00 ";  // Caapsml
+        $query .= "   ELSE 0 ";
+        $query .= "END AS sugerido, ";
+        $query .= "(SELECT AVG(e.vl_entry) AS media FROM entries e WHERE e.id_category = c.id AND year(e.dt_entry) = " . $_last_year . ") AS media ";
+        $query .= "FROM ";
+        $query .= "categories c ";
+        $query .= "WHERE ";
+        $query .= "c.id IN ( 86, 91, 99, 100, 119, 121, 124, 133, 140 ) ";
+        $query .= "ORDER BY ";
+        $query .= "c.id, ";
+        $query .= "c.day_prev ";
+
+        $registers = DB::select($query);
+
+        $i=0;
+        foreach($registers as $register)
+        {
+            $categories[] = $register;
+            $i++;
+        }
+
+        $_future_year = $_last_year + 1;
+
+        for ($_month=1; $_month <= 12; $_month++) {
+            $resp = "";
+            $resp .= "INSERT INTO `entries` ( ";
+            $resp .= "`id_category`, ";
+            $resp .= "`dt_entry`, ";
+            $resp .= "`vl_entry`, ";
+            $resp .= "`nm_entry`, ";
+            $resp .= "`ds_category`, ";
+            $resp .= "`ds_subcategory`, ";
+            $resp .= "`status`, ";
+            $resp .= "`fixed_costs`, ";
+            $resp .= "`checked`, ";
+            $resp .= "`published` ";
+            $resp .= ") VALUES <br />";
+            echo $resp;
+            foreach($categories as $category)
+            {
+                $_sugerido = $category->sugerido;
+                //$_sugerido = $category->media;
+                $this->getEntry($_future_year, $_month, $category->id, $_sugerido, $_last_year, 8);
+            }
+            $this->getEstatico($_future_year, $_month, '2', '113', '-800.00', 'Educativa', '');
+            $this->getEstatico($_future_year, $_month, '2', '113', '-200.00', 'Educativa Livros', '');
+            $this->getEstatico($_future_year, $_month, '8', '113', '-90.00', 'Londrinense FC', '', ';');
+            //$this->getEstatico($_future_year, $_month, '20', '104', '-115.00', 'Gasolia', '', ';');
+            echo "<br />";
+        }
+
+        exit;
+
+    }
+
 }

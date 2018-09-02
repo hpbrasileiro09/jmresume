@@ -91,3 +91,6 @@ Route::get('stimages/{diretorio}/{filename}', function ($diretorio, $filename) {
 });
 
 Route::get('/teste', 'AdminController@teste');
+
+Route::get('/prepara', 'EntryController@prepara');
+
