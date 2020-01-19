@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth','admin']], function() {
 	Route::get('/reports/lupa', ['as' => 'reports.lupa', 'uses' => 'ReportController@lupa']);
 	Route::get('/entry/json/{id}', 'EntryController@entryjson');
 	Route::post('/entry/save', 'EntryController@entrysave');
+
+	Route::post('/reports/uparam', ['as' => 'reports.uparam', 'uses' => 'ReportController@uparam']);
+
 });
 
 Route::group(['middleware' => 'cors'], function() {

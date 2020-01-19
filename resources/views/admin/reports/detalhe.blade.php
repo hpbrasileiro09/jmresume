@@ -471,15 +471,27 @@
                     }
                     $_html .= "</tr>";                
 
+                    $_html .= "<form action=\"" . route('reports.uparam') . "\" method=\"POST\">";
+                    $_html .= "<input name=\"ano\" type=\"hidden\" value=\"".$ano."\" />";
                     $_html .= "<tr>";
                     $_html .= "<td><em></em></td>";
-                    $_html .= "<td><em>APOIO</em></td>";
+                    $_html .= "<td><em>";
+                    $_html .= "<button ";
+                    $_html .= "type=\"submit\" class=\"btn btn-primary btnSubmit\" ";
+                    $_html .= "id=\"submit\">";
+                    $_html .= "APOIO";
+                    $_html .= "</button>";
+                    $_html .= "</em></td>";
                     $_html .= "<td><em></em></td>";
                     $_last = 0;
                     for($x = 0; $x<count($apoio); $x++) {
-                        $_html .= "<td>".trataValor($apoio[$x])."</td>";
+                        $_html .= "<td>";
+                        $_html .= "<input name='mes".$x."' style='width: 50px; text-align: right;' type='text' ";
+                        $_html .= "value='".$apoio[$x]."' />";
+                        $_html .= "</td>";
                     }
-                    $_html .= "</tr>";                
+                    $_html .= "</tr>";
+                    $_html .= "</form>";
 
                     $_html .= "<tr>";
                     $_html .= "<td><em></em></td>";

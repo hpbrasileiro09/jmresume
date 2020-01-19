@@ -251,6 +251,25 @@ class ReportController extends Controller
 
     }
 
+    public function uparam(Request $request)
+    {
+
+        $ano = $request->input('ano');
+
+        $_param = Param::select(['params.*'])->where('label','=',$ano)->get();
+
+        foreach($_param as $item) {
+            $_value = "";
+            for ($x=0; $x < 12; $x++)
+                $_value .= ($x == 0 ? "" : ";") . $request->input('mes'.$x);
+            $item->value = $_value;
+            $item->save();
+        }
+
+        return response()->redirectToRoute($this->path_view . '.detalhe');        
+
+    }
+
     public function lupa(Request $request)
     {
 
