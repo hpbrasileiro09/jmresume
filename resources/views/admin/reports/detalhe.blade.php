@@ -19,13 +19,8 @@
                             <th scope="col"><font style='float: left;'>Categoria&nbsp;<?php echo $ano; ?></font></th>
                             <th scope="col"></th>
                             <?php
-                            $txtcsv = "";
-                            $txtcsv .= ";";
-                            $txtcsv .= ";";
-                            $txtcsv .= ";";
                             foreach($mesesG as $lmes) 
                             {
-                                $txtcsv .= $lmes['abrev'].";";
                                 echo "<th scope=\"col\"><font style='float: right;'>".$lmes['abrev']."</font></th>";
                             }
                             ?>
@@ -38,7 +33,6 @@
                         </tr>
                     </tfoot>
                     <tbody>
-
 
                 <?php 
 
@@ -77,6 +71,7 @@
     function trataValorA($pvalor, $ano, $mes, $cat, $deb=0, $vl_prev=0)
     {
       $path = 'http://'.$_SERVER['HTTP_HOST'].'/reports/lupa?ano='.$ano.'&mes='.$mes.'&cat='.$cat.'&deb='.$deb;
+      //$path = 'http://127.0.0.1:8888/dev1/public' . '/reports/lupa?ano='.$ano.'&mes='.$mes.'&cat='.$cat.'&deb='.$deb;
       $resp = number_format($pvalor, 2, ',', '.');
       $cor = "green";
       if ($pvalor < 0) $cor = "red";
@@ -315,7 +310,7 @@
 
                     echo "<tr>";
                     echo "<td>".trataTextoSize($gitem['ordem'])."</td>";
-                    echo "<td>".utf8_encode($gitem['name']).'&nbsp;('.trataTextoSize($gitem['category_id']).")</td>";
+                    echo "<td>".$gitem['name'].'&nbsp;('.trataTextoSize($gitem['category_id']).")</td>";
                     echo "<td>".trataValorB($gitem['vl_prev'])."</td>";
                     for ($z=1; $z<=12; $z++) {
                         echo "<td>".trataValorA($gitem['M'.$z], $gitem['MA'.$z], $gitem['MI'.$z], $gitem['category_id'], 1, $gitem['VP'.$z])."</td>";
@@ -388,15 +383,169 @@
                         <td><em></em></td>
                         <td><em></em></td>
                         <td><em></em></td>
-                <?php
-                $x=0;
-                foreach($creditosT as $icred)
-                {
-                    $resp = $icred + $debitosT[$x++];
-                    echo "<td>".trataValor($resp)."</td>";
-                }
-                ?>
+                        <?php
+                        $x=0;
+                        foreach($creditosT as $icred)
+                        {
+                            $resp = $icred + $debitosT[$x++];
+                            echo "<td>".trataValor($resp)."</td>";
+                        }
+                        ?>
                     </tr>                
+
+                </tbody>
+              </table>
+
+               <table class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                            <th scope="col"></th>
+                            <th scope="col"><font style='float: left;'>Categoria&nbsp;<?php echo $ano; ?></font></th>
+                            <th scope="col"></th>
+                            <?php
+                            foreach($mesesG as $lmes) 
+                            {
+                                echo "<th scope=\"col\"><font style='float: right;'>".$lmes['abrev']."</font></th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                        <tfoot>
+                      <tr>
+                          <td colspan="14"><em>Jm Detalhe&nbsp;<?php echo $ano; ?></em></td>
+                          <td>&nbsp;</td>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+
+                    <!-- ================================= -->
+
+                    <?php
+
+                    $valor12 = 0;
+                    foreach($total12 as $item) 
+                    {
+                        $valor12 += $item->total;
+                    }
+
+                    $resumo = [];
+
+                    $x=0;
+                    $clinha = []; 
+                    foreach($creditosT as $icred)
+                    {
+                        $resp = $creditosT[$x++];
+                        $clinha[] = $resp;
+                    }
+
+                    $resumo[] = $clinha;
+
+                    $x=0;
+                    $dlinha = []; 
+                    foreach($debitosT as $icred)
+                    {
+                        $resp = $debitosT[$x++];
+                        $dlinha[] = $resp;
+                    }
+
+                    $resumo[] = $dlinha;
+
+                    for($x = 0; $x<count($clinha); $x++) {
+                        $_cre = $clinha[$x];
+                        $_deb = $dlinha[$x];
+                        $_last = $_cre + $_deb;
+                        $tlinha[] = $_last;
+                    }
+
+                    //$resumo[] = $tlinha;
+
+                    $x = 0;    
+                    $_html = "";
+
+                    $_html .= "<tr>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em></em></td>";
+                    for($x = 0; $x<count($clinha); $x++) {
+                        $_html .= "<td><em></em></td>";
+                    }
+                    $_html .= "</tr>";                
+
+                    $_html .= "<tr>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em>APOIO</em></td>";
+                    $_html .= "<td><em></em></td>";
+                    $_last = 0;
+                    for($x = 0; $x<count($apoio); $x++) {
+                        $_html .= "<td>".trataValor($apoio[$x])."</td>";
+                    }
+                    $_html .= "</tr>";                
+
+                    $_html .= "<tr>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em>ACUMULADO</em></td>";
+                    $_html .= "<td><em></em></td>";
+                    $_last = 0;
+                    for($x = 0; $x<count($clinha); $x++) {
+                        $_cre = $clinha[$x];
+                        $_deb = $dlinha[$x];
+                        $_apo = $apoio[$x];
+                        if ($x == 0) { 
+                            $_last = $valor12; 
+                        }
+                        $_html .= "<td>".trataValor($_last)."</td>";
+                        $_last += $_cre + $_apo + $_deb; 
+                    }
+                    $_html .= "</tr>";                
+
+                    $x=0;
+                    foreach($resumo as $linha) {
+                        $_label = "";
+                        if ($x == 0) $_label = "CRÉDITO";
+                        if ($x == 1) $_label = "DÉBITO";
+                        $_html .= "<tr>";
+                        $_html .= "<td><em></em></td>";
+                        $_html .= "<td><em>" . $_label . "</em></td>";
+                        $_html .= "<td><em></em></td>";
+                        foreach($linha as $item)
+                        {
+                            $_html .= "<td>".trataValor($item)."</td>";
+                        }
+                        $_html .= "</tr>";                
+                        $x++;
+                    } 
+
+                    $_html .= "<tr>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em>RESUMO</em></td>";
+                    $_html .= "<td><em></em></td>";
+                    $_last = 0;
+                    for($x = 0; $x<count($clinha); $x++) {
+                        $_cre = $clinha[$x];
+                        $_deb = $dlinha[$x];
+                        $_apo = $apoio[$x];
+                        if ($x == 0) { 
+                            $_last = $valor12; 
+                        } 
+                        $_last += $_cre + $_apo + $_deb; 
+                        $_html .= "<td>".trataValor($_last)."</td>";
+                    }
+                    $_html .= "</tr>";                
+
+                    $_html .= "<tr>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em></em></td>";
+                    $_html .= "<td><em></em></td>";
+                    for($x = 0; $x<count($clinha); $x++) {
+                        $_html .= "<td><em></em></td>";
+                    }
+                    $_html .= "</tr>";                
+
+                    echo $_html;
+
+                    ?>
+
+                    <!-- ================================= -->
 
                 </tbody>
               </table>

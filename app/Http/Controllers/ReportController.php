@@ -139,13 +139,51 @@ class ReportController extends Controller
 
         //======================================
 
+        $apoio = [];
+        $apoio[] = 0; //jan
+        $apoio[] = 0; //fev
+        $apoio[] = 0; //mar
+        $apoio[] = 0; //abr
+        $apoio[] = 0; //mai
+        $apoio[] = 0; //jun
+        $apoio[] = 0; //jul
+        $apoio[] = 0; //ago
+        $apoio[] = 0; //set
+        $apoio[] = 0; //out
+        $apoio[] = 0; //nov
+        $apoio[] = 0; //dez
+
+        $_param = Param::select(['params.*'])->where('label','=',$ano)->get();
+        foreach($_param as $item) {
+            $apoio = explode(";", $item->value); 
+        }
+
+        $agorax = '2009-12-20 00:00:00';
+        $futuro = ($ano) . '-01-01 00:00:00';
+        $faixaax= '0';
+        $faixabx= '0';
+
+        $query = "";
+        $query .= "SELECT ";
+        $query .= "   sum(j.vl_entry) AS total ";
+        $query .= "FROM ";
+        $query .= "   entries j ";
+        $query .= "   INNER JOIN categories c ON c.id = j.id_category ";
+        $query .= "WHERE ";
+        $query .= "   j.status = 1 AND ";
+        $query .= "   j.dt_entry ";
+        $query .= "   BETWEEN ";
+        $query .= "   Str_to_date(Date_format('" . $agorax . "','%Y-%m-%d 00:00:00'),Get_format(DATETIME,'iso'))";
+        $query .= "    AND '" . $futuro . "' ";
+
+        $total12 = DB::select($query);
+
         $agorax = '2010-01-01 00:00:00';
         $futuro = ($ano + 1) . '-01-01 00:00:00';
         $faixaax= '0';
         $faixabx= '0';
 
         $query = "";
-
         $query .= "SELECT ";
         $query .= "   'C' AS tipo, ";
         $query .= "   j.id, ";
@@ -206,7 +244,9 @@ class ReportController extends Controller
                 'categoriesC',
                 'categoriesD',
                 'debitos',
-                'creditos'
+                'creditos',
+                'total12',
+                'apoio'
             ));    
 
     }
