@@ -97,3 +97,10 @@ Route::get('/teste', 'AdminController@teste');
 
 Route::get('/prepara', 'EntryController@prepara');
 
+Route::get('/api/entries', 'EntryController@all_entries');
+
+Route::get('/api/categories', function() {
+	$call = App\Category::all();
+	return $call->toJson(JSON_PRETTY_PRINT);
+});
+

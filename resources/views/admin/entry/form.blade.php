@@ -41,7 +41,7 @@
 <div class="form-group">
 	<label for="ds_detail" class="control-label col-sm-2">Detail</label>
 	<div class="col-sm-10">
-		<textarea  name="ds_detail" rows="2" cols="80">{{ $register->ds_detail or '' }}</textarea>
+		<textarea class="form-control" name="ds_detail" rows="2" cols="80">{{ $register->ds_detail or '' }}</textarea>
 	</div>
 </div>
 

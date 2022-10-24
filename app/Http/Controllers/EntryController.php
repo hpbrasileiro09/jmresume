@@ -700,7 +700,7 @@ class EntryController extends Controller
 
         $categories = Array();
 
-        $_last_year = 2018;
+        $_last_year = 2021;
 
         $query  = "";
         $query .= "SELECT ";
@@ -773,6 +773,19 @@ class EntryController extends Controller
         }
 
         exit;
+
+    }
+
+    public function all_entries() {
+
+        $_param = Param::findOrFail(1);
+        $agorax = $_param->value;
+
+        $query = $this->montaSql($agorax, '');
+
+        $registers = DB::select($query);
+
+	return $registers; //->toJson(JSON_PRETTY_PRINT);
 
     }
 
