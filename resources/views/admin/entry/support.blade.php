@@ -128,7 +128,10 @@
           }
         });
         if (i > 0) {
-          $("#action").val($("#action_choice").val());
+	  var act_choice = $("#action_choice").val();	
+          $("#action").val(act_choice);
+	  console.log("act", $("#action").val());
+	  console.log("act_choice", act_choice);
           $("#fsupport").submit();
         }  
         else

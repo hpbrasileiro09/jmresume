@@ -99,7 +99,17 @@ Route::get('/prepara', 'EntryController@prepara');
 
 Route::get('/api/entries', 'EntryController@all_entries');
 
-Route::get('/api/categories', function() {
+Route::get('/api/entries_py', 'EntryController@all_entries_py');
+
+Route::get('/api/entries_csv', 'EntryController@all_entries_csv');
+
+Route::get('/api/now_entries_csv', 'EntryController@now_entries_csv');
+
+Route::get('/api/categories_csv', 'EntryController@all_categories_csv');
+
+Route::get('/api/categories', 'CategoryController@all_categories');
+
+Route::get('/api/categorieso', function() {
 	$call = App\Category::all();
 	return $call->toJson(JSON_PRETTY_PRINT);
 });

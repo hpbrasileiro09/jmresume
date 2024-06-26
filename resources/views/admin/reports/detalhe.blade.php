@@ -471,6 +471,7 @@
                     }
                     $_html .= "</tr>";                
 
+		    /*
                     $_html .= "<form action=\"" . route('reports.uparam') . "\" method=\"POST\">";
                     $_html .= "<input name=\"ano\" type=\"hidden\" value=\"".$ano."\" />";
                     $_html .= "<tr>";
@@ -492,6 +493,7 @@
                     }
                     $_html .= "</tr>";
                     $_html .= "</form>";
+		     */
 
                     $_html .= "<tr>";
                     $_html .= "<td><em></em></td>";
@@ -501,7 +503,7 @@
                     for($x = 0; $x<count($clinha); $x++) {
                         $_cre = $clinha[$x];
                         $_deb = $dlinha[$x];
-                        $_apo = $apoio[$x];
+                        $_apo = 0.0; //$apoio[$x];
                         if ($x == 0) { 
                             $_last = $valor12; 
                         }
@@ -535,7 +537,7 @@
                     for($x = 0; $x<count($clinha); $x++) {
                         $_cre = $clinha[$x];
                         $_deb = $dlinha[$x];
-                        $_apo = $apoio[$x];
+                        $_apo = 0.0; //$apoio[$x];
                         if ($x == 0) { 
                             $_last = $valor12; 
                         } 

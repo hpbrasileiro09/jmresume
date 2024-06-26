@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -136,8 +138,28 @@ class EntryController extends Controller
 
     }
 
-    public function montaSql($agorax, $search, $_union = true)
+    public function montaSqlTotal($agorax)
     {
+        $d = new \DateTime( $agorax );
+        $d->modify( 'first day of +24 month' );
+        $futuro = $d->format( 'Y-m-d' ) . ' 00:00:00';
+
+        $faixaax='0';
+        $faixabx='1';
+
+	$query = "";
+	$query .= "SELECT count(*) AS `total` FROM `entries` AS j "; 
+	$query .= "WHERE ";
+        $query .= "  j.`dt_entry` BETWEEN ";
+        $query .= "  Str_to_date(Date_format(ADDDATE('" . $agorax . "',+" . $faixabx . "),'%Y-%m-%d 00:00:00'),";
+        $query .= "  Get_format(DATETIME,'iso')) AND '" . $futuro . "' ";
+
+	return $query;
+    }
+
+    public function montaSql($agorax, $search, $_union = true, $skip = '0', $limit = '500')
+    {
+    	$pagination = "LIMIT " . $skip . ", " . $limit;
 
         $d = new \DateTime( $agorax );
         $d->modify( 'first day of +24 month' );
@@ -203,7 +225,6 @@ class EntryController extends Controller
             $query .= "  ADDDATE('" . $agorax . "',+" . $faixaax . "),'%Y-%m-%d 23:59:59'),";
             $query .= "  Get_format(DATETIME,'iso')) ";
             $query .= "UNION ";
-
         }
 
         $_images[] = Array( 'id' =>  '89', 'src' => asset('icones/globo.png'),     'alt' => 'globo' );
@@ -282,9 +303,10 @@ class EntryController extends Controller
         if ($_union == true)
         {
             $query.="ORDER BY dt_entry, ds_subcategory ";
+	    $query.=$pagination;
         } else {
             $query.="ORDER BY id DESC ";
-            $query.="LIMIT 100";
+    		$query .= "LIMIT 0, 150 ";
         }
 
         return $query;
@@ -294,10 +316,17 @@ class EntryController extends Controller
     public function supportsave(Request $request)
     {
         $i = 0;
+	$icont = 0;
         $all = $request->all();
         $action = $request->input("action");
         $mat = $request->input("bag");
         $mat0 = explode(",", $mat); 
+	$message = "";
+	$itens = Array();
+
+	\Storage::append('jmresume.log', "action [".$action."]");
+	\Storage::append('jmresume.log', "bag [".$mat."]");
+
         foreach($mat0 as $item)
         {
             $ds_category = "";
@@ -329,7 +358,7 @@ class EntryController extends Controller
                 if ($key == $item . "_published")
                     $published = "1";
             }
-            $resp[] = Array(
+            $tresp = Array(
                 'id' => $item,
                 'ds_category' => $ds_category,
                 'ds_subcategory' => $ds_subcategory,
@@ -341,7 +370,12 @@ class EntryController extends Controller
                 'fixed_costs' => $fixed_costs,
                 'published' => $published,
             );
+            $resp[] = $tresp;
+	    try {
+		$itens[] = $item;
             $register = Entry::findOrFail($item);
+		\Storage::append('jmresume.log', "Entry [".$item."]");
+		\Storage::append('jmresume.log', "Entry [".print_r($tresp, true)."]");
             if ($action == "1")
             {
                 $register->id_category = $id_category;
@@ -354,25 +388,41 @@ class EntryController extends Controller
                 $register->checked = $checked;
                 $register->published = $published;
                 $register->save();
+		\Storage::append('jmresume.log', "Entry [".$item."] Save");
+            	$i += 1;
             }
             if ($action == "2")
             {
                 $register->delete();
+		\Storage::append('jmresume.log', "Entry [".$item."] Delete");
+            	$i += 1;
             }
-            $i++;
+	    } catch(ModelNotFoundException $ex) {
+		$message = $ex->getMessage();
+	    }
+	    $icont += 1;
         }   
 
         if ($i > 0)
         {
             $kind = 1;
-            $msg = $i . " register(s) were " . ($action == "1" ? "updated" : "deleted") . " successfully";
+            $msg = $i . " register(s) were " . ($action == "1" ? "updated" : "deleted") . " from " . $icont . " successfully";
 
             session(['kind' => $kind]);
             session(['msg' => $msg . "(" . $action . ")"]);
-        }
+	} else {
+            $kind = 3;
+            $msg = "Neither register(s) weren't " . ($action == "1" ? "updated" : "deleted") . " from " . $icont . " selected";
+	    $msg .= "<br/>I[".join(",",$itens)."]";
+	    $msg .= "<br/>M[".$mat."]";
+	    $msg .= "<br/>A[".$action."]";
+
+            session(['kind' => $kind]);
+            session(['msg' => $msg]);
+	}
 
         return response()->redirectToRoute($this->path_view . '.support');
-        return $request->all();
+        //return $request->all();
     }
 
     /**
@@ -778,15 +828,209 @@ class EntryController extends Controller
 
     public function all_entries() {
 
+    	$skip = "0";
+    	$limit = "1000";
+    	if (\Request::has("skip") == true) {
+            $skip = \Request::get("skip");
+    	}
+    	if (\Request::has("limit") == true) {
+            $limit = \Request::get("limit");
+    	}
+
         $_param = Param::findOrFail(1);
         $agorax = $_param->value;
 
-        $query = $this->montaSql($agorax, '');
+        $query = $this->montaSql($agorax, '', true, $skip, $limit);
 
         $registers = DB::select($query);
 
-	return $registers; //->toJson(JSON_PRETTY_PRINT);
+	$total = DB::select($this->montaSqlTotal($agorax))[0]->total; 
 
+	$resume = Array(
+	   'registers' => $registers,
+	   'total' => $total + 1
+	);	
+
+	return $resume; //->toJson(JSON_PRETTY_PRINT);
+
+    }
+
+    public function all_entries_py() {
+        $query = $this->montaSqlAll();
+	$registers = DB::select($query);
+	$resume = Array( 'registers' => $registers );
+	return $resume;
+    }
+
+    public function now_entries_csv() {
+
+       $headers = [
+         'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+         'Content-type'        => 'text/csv',
+         'Content-Disposition' => 'attachment; filename=nowentries.csv',
+         'Expires'             => '0',
+         'Pragma'              => 'public'
+       ];
+
+       $search = \Request::get('search');
+
+       $_param = Param::findOrFail(1);
+
+       $agorax = $_param->value;
+
+       $query = $this->montaSql($agorax, $search);
+
+       $result = DB::select($query);
+
+       $list = [];
+       foreach($result as $row)
+       {
+          $list[] = (array) $row;
+       }
+
+       array_unshift($list, array_keys($list[0]));
+
+       $callback = function() use ($list)
+       {
+          $FH = fopen('php://output', 'w');
+          foreach ($list as $row) {
+             fputcsv($FH, $row);
+          }
+          fclose($FH);
+       };
+
+       return response()->stream($callback, 200, $headers);
+
+    }
+
+    public function all_entries_csv() {
+
+	$iyear = 0;
+        $year = \Request::get('year');
+	if (isset($year)) {
+	   $iyear = $year;
+	}
+
+       $headers = [
+         'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+         'Content-type'        => 'text/csv',
+         'Content-Disposition' => 'attachment; filename=entries.csv',
+         'Expires'             => '0',
+         'Pragma'              => 'public'
+       ];
+
+       $query = $this->montaSqlAll($iyear);
+
+       $result = DB::select($query);
+
+       $list = [];
+       foreach($result as $row)
+       {
+          $list[] = (array) $row;
+       }
+
+       array_unshift($list, array_keys($list[0]));
+
+       $callback = function() use ($list)
+       {
+          $FH = fopen('php://output', 'w');
+          foreach ($list as $row) {
+             fputcsv($FH, $row);
+          }
+          fclose($FH);
+       };
+
+       return response()->stream($callback, 200, $headers);
+
+    }
+
+    public function all_categories_csv() {
+
+       $headers = [
+         'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+         'Content-type'        => 'text/csv',
+         'Content-Disposition' => 'attachment; filename=categories.csv',
+         'Expires'             => '0',
+         'Pragma'              => 'public'
+       ];
+
+       $query = $this->montaSqlCat();
+
+       $result = DB::select($query);
+
+       $list = [];
+       foreach($result as $row)
+       {
+          $list[] = (array) $row;
+       }
+
+       array_unshift($list, array_keys($list[0]));
+
+       $callback = function() use ($list)
+       {
+          $FH = fopen('php://output', 'w');
+          foreach ($list as $row) {
+             fputcsv($FH, $row);
+          }
+          fclose($FH);
+       };
+
+       return response()->stream($callback, 200, $headers);
+
+    }
+
+    public function montaSqlCat()
+    {
+        $query = "";
+        $query .= "SELECT ";
+	$query .= "  Y.`id`, ";
+        $query .= "  Y.`name` AS `category_nm`, ";
+        $query .= "  Y.`vl_prev`, ";
+        $query .= "  Y.`day_prev`, ";
+        $query .= "  Y.`ordem` AS `order`, ";
+        $query .= "  Y.`type` AS `category_tp` ";
+        $query .= "FROM ";
+        $query .= "  `categories` Y ";
+        return $query;
+    }
+
+    public function montaSqlAll($iyear)
+    {
+        $query = "";
+        $query .= "SELECT ";
+        $query .= "  X.`id`, ";
+        $query .= "  X.`id_category`, ";
+        $query .= "  X.`dt_entry`, ";
+        $query .= "  COALESCE(DATE_FORMAT(X.`dt_entry`, '%d/%m/%Y'),'') AS `dt_entry_br`, "; 
+        $query .= "  year(X.`dt_entry`) AS `ano`, ";
+        $query .= "  month(X.`dt_entry`) AS `mes`, ";
+        $query .= "  day(X.`dt_entry`) AS `dia`, ";
+        $query .= "  X.`vl_entry`, ";
+        $query .= "  X.`nm_entry`, ";
+        $query .= "  X.`ds_category`, ";
+        $query .= "  X.`ds_subcategory`, ";
+        $query .= "  X.`status`, ";
+        $query .= "  X.`fixed_costs`, ";
+        $query .= "  X.`checked`, ";
+        $query .= "  X.`published`, ";
+        $query .= "  X.`ds_detail`, ";
+        $query .= "  X.`created_at`, ";
+        $query .= "  X.`updated_at`, ";
+        $query .= "  Y.`name` AS `nm_category`, ";
+        $query .= "  Y.`vl_prev`, ";
+        $query .= "  Y.`day_prev`, ";
+        $query .= "  Y.`ordem` AS `order`, ";
+        $query .= "  Y.`type` AS `tp_category` ";
+        $query .= "FROM ";
+        $query .= "  `entries` X ";
+        $query .= "  LEFT JOIN `categories` Y ON Y.`id` = X.`id_category` ";
+        $query .= "WHERE ";
+        $query .= "  X.`status` = 1 ";
+        $query .= "  AND X.`dt_entry` >= '2009-12-20 00:00:00' ";
+        if ($iyear != 0) { $query .= "  AND YEAR(X.`dt_entry`) = " . $iyear . " "; }
+        $query .= "ORDER BY ";
+        $query .= "  X.`dt_entry` ASC ";
+        return $query;
     }
 
 }

@@ -197,4 +197,38 @@ class CategoryController extends Controller
         return response()->redirectToRoute($this->path_view . '.index');        
     }
 
+    public function all_categories() 
+    {
+	$skip = "0";
+	$limit = "1000";
+	if (\Request::has("skip") == true) {
+		$skip = \Request::get("skip");
+	}
+	if (\Request::has("limit") == true) {
+		$limit = \Request::get("limit");
+	}
+	$pagination = "LIMIT " . $skip . ", " . $limit;
+	$query = "";
+	$query .= "SELECT ";
+	$query .= "`id`, ";
+	$query .= "`name`, ";
+	$query .= "`published`, ";
+	$query .= "`vl_prev`, ";
+	$query .= "`day_prev`, ";
+	$query .= "`ordem`, ";
+	$query .= "`type`, ";
+	$query .= "`created_at`, ";
+	$query .= "`updated_at` ";
+	$query .= "FROM ";
+	$query .= "`categories` ";
+	$query .= $pagination;
+	$registers = DB::select($query);
+	$total = DB::select('SELECT count(*) AS `total` FROM `categories`')[0]->total;
+        $resume = Array(
+           'registers' => $registers,
+           'total' => $total
+        );
+	return $resume;
+    }
+
 }
